@@ -6,6 +6,7 @@ config = {
   "GITHUB_CALLBACK": "/login/github/callback",
   "GRANT_TOKEN_SIZE": 32,
   "AUTH_TOKEN_SIZE": 64,
+  "REFRESH_TOKEN_SIZE": 64,
   "BCRYPT_SALT_ROUNDS": 8,
   "DEBUG": false,
   "NEWRELIC_LOG_LEVEL": "info",

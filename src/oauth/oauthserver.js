@@ -41,25 +41,94 @@ server.grant(oauth.grant.code(
         })
     }
 ))
+
 /**
  * Generate refresh token
  */
 server.grant(oauth.grant.token(
     function (client, user, ares, done) {
-        models.AuthToken.create({
-            token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
+        models.RefreshToken.create({
+            token: generator.genNcharAlphaNum(config.REFRESH_TOKEN_SIZE),
             scope: ['*'],
             explicit: false,
             clientId: client.id,
             userId: user.id
-        }).then(function (authToken) {
-            return done(null, authToken.token)
+        }).then(function (refreshToken) {
+            return done(null, refreshToken.token)
         }).catch(function (err) {
             return done(err)
         })
 
     }
 ))
+
+/**
+ * Exchange **refresh token** to get access token
+ */
+server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope, done){
+
+      models.RefreshToken.findOne({
+        where: {
+          token: refreshToken
+        },
+        include: [models.Client]
+      }).then(function(refreshToken) {
+
+        if (!refreshToken) {
+            return done(null, false) // token does not exist
+        }
+        if (client.id !== refreshToken.client.id) {
+            return done(null, false) //Wrong Client ID
+          }
+
+          models.AuthToken.findOne({
+            where: {
+              clientId: refreshToken.clientId,
+              userId: refreshToken.userId
+            }
+          }).then(function(authToken) {
+
+              if(!authToken) {
+                models.AuthToken.create({
+                  token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
+                  scope: ['*'],
+                  explicit: true,
+                  expires : Date.now() + 600*1000,
+                  clientId: refreshToken.clientId,
+                  userId: refreshToken.userId
+                }).then(function (authToken) {
+                    return done(null, authToken.expires, authToken.token)
+                })
+              }
+
+              var expired = Date.now() > authToken.expires ? true : false
+
+
+              if(authToken && !expired) {
+                  return done(null, authToken.updatedAt, authToken.token)
+              }
+
+              if(authToken && expired) {
+
+                (async () => {
+                  await authToken.destroy()
+                })()
+
+                models.AuthToken.create({
+                  token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
+                  expires: Date.now() + 600*1000,
+                  scope: ['*'],
+                  explicit: true,
+                  clientId: refreshToken.clientId,
+                  userId: refreshToken.userId
+                }).then(function (token) {
+                  return done(null, token.token, refreshToken.token)
+                })
+              }
+          }).catch(err => console.log(err))
+
+      }).catch(err => console.log(err))
+}))
 
 /**
  * Exchange **grant code** to get access token
@@ -85,7 +154,7 @@ server.exchange(oauth.exchange.code(
                 return done(null, false) // Wrong redirect URI
             }
 
-            models.AuthToken.findCreateFind({
+           models.AuthToken.findCreateFind({
                 where: {
                     clientId: grantCode.clientId,
                     userId: grantCode.userId,
@@ -95,6 +164,8 @@ server.exchange(oauth.exchange.code(
                     token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
                     scope: ['*'],
                     explicit: true,
+                    expires: Date.now() + 600*1000,
+                    updatedAt: new Date(),
                     clientId: grantCode.clientId,
                     userId: grantCode.userId
                 }
@@ -113,6 +184,7 @@ server.exchange(oauth.exchange.code(
 ))
 
 //TODO: Implement all the other types of tokens and grants !
+
 
 const authorizationMiddleware = [
     cel.ensureLoggedIn('/login'),
@@ -180,6 +252,7 @@ server.exchange(oauth.exchange.clientCredentials((client, scope, done) => {
          token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
          scope: ['*'],
          explicit: false,
+         expires: Date.now() + 600*1000,
          clientId: client.get().id,
          userId: null
      }).then((Authtoken) => {

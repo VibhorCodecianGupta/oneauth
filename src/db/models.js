@@ -101,7 +101,9 @@ Client.hasMany(GrantCode)
 const AuthToken = db.define('authtoken', {
     token: {type: Sequelize.DataTypes.STRING, primaryKey: true},
     scope: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
-    explicit: {type: Sequelize.DataTypes.BOOLEAN, default: false}
+    explicit: {type: Sequelize.DataTypes.BOOLEAN, default: false},
+    expires: {type: Sequelize.DataTypes.DATE, default: Date.now() + 600*1000}
+    //expires: {type: Sequelize.DATE}
 })
 
 AuthToken.belongsTo(User)
@@ -109,6 +111,20 @@ User.hasMany(AuthToken)
 
 AuthToken.belongsTo(Client)
 Client.hasMany(AuthToken)
+
+
+const RefreshToken = db.define('refreshtoken', {
+  token: {type: Sequelize.DataTypes.STRING, primaryKey: true},
+  scope: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
+  explicit: {type: Sequelize.DataTypes.BOOLEAN, default: false}
+})
+
+RefreshToken.belongsTo(User)
+User.hasMany(RefreshToken)
+
+RefreshToken.belongsTo(Client)
+Client.hasMany(RefreshToken)
+
 
 const Demographic = db.define('demographic', {})
 
@@ -169,7 +185,7 @@ if (!process.env.ONEAUTH_DB_NO_SYNC) {
 module.exports = {
     models: {
         User, UserLocal, UserFacebook, UserTwitter, UserGithub, UserLms,
-        Client, GrantCode, AuthToken, Resetpassword, Verifyemail,
+        Client, GrantCode, AuthToken, RefreshToken, Resetpassword, Verifyemail,
         Demographic, Address, College, Company, Branch, State, Country
     },
     db

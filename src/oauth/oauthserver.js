@@ -105,7 +105,7 @@ server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope
 
 
               if(authToken && !expired) {
-                  return done(null, authToken.updatedAt, authToken.token)
+                  return done(null, authToken.token, refreshToken.token)
               }
 
               if(authToken && expired) {

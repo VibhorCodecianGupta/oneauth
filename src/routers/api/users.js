@@ -21,16 +21,16 @@ router.get('/me',
                 for (ia of includedAccounts) {
                     switch (ia) {
                         case 'facebook':
-                            includes.push(models.UserFacebook)
+                            includes.push({model: models.UserFacebook, attributes:{exclude:["accessToken","refreshToken"]}})
                             break
                         case 'twitter':
-                            includes.push(models.UserTwitter)
+                            includes.push({model: models.UserTwitter, attributes:{exclude:["token","tokenSecret"]}})
                             break
                         case 'github':
-                            includes.push(models.UserGithub)
+                            includes.push({model: models.UserGithub, attributes:{exclude:["token","tokenSecret"]}})
                             break
                         case 'lms':
-                            includes.push(models.UserLms)
+                            includes.push({model: models.UserLms, attributes:{exclude:["accessToken"]}})
                             break
                     }
                 }
@@ -68,16 +68,16 @@ router.get('/me/address',
                 for (ia of includedAccounts) {
                     switch (ia) {
                         case 'facebook':
-                            includes.push(models.UserFacebook)
+                            includes.push({model: models.UserFacebook, attributes:{exclude:["accessToken","refreshToken"]}})
                             break
                         case 'twitter':
-                            includes.push(models.UserTwitter)
+                            includes.push({model: models.UserTwitter, attributes:{exclude:["token","tokenSecret"]}})
                             break
                         case 'github':
-                            includes.push(models.UserGithub)
+                            includes.push({model: models.UserGithub, attributes:{exclude:["token","tokenSecret"]}})
                             break
                         case 'lms':
-                            includes.push(models.UserLms)
+                            includes.push({model: models.UserLms, attributes:{exclude:["accessToken"]}})
                             break
                     }
                 }

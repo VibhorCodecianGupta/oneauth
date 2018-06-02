@@ -102,8 +102,7 @@ const AuthToken = db.define('authtoken', {
     token: {type: Sequelize.DataTypes.STRING, primaryKey: true},
     scope: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
     explicit: {type: Sequelize.DataTypes.BOOLEAN, default: false},
-    expires: {type: Sequelize.DataTypes.DATE, default: Date.now() + 600*1000}
-    //expires: {type: Sequelize.DATE}
+    expires: {type: Sequelize.DataTypes.DATE, default: Date.now() + 86400*1000} // 24 hours
 })
 
 AuthToken.belongsTo(User)

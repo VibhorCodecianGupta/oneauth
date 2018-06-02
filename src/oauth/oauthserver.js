@@ -93,7 +93,7 @@ server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope
                   token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
                   scope: ['*'],
                   explicit: true,
-                  expires : Date.now() + 600*1000,
+                  expires : Date.now() + 86400*1000,
                   clientId: refreshToken.clientId,
                   userId: refreshToken.userId
                 }).then(function (authToken) {
@@ -116,7 +116,7 @@ server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope
 
                 models.AuthToken.create({
                   token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
-                  expires: Date.now() + 600*1000,
+                  expires: Date.now() + 86400*1000,
                   scope: ['*'],
                   explicit: true,
                   clientId: refreshToken.clientId,
@@ -164,7 +164,7 @@ server.exchange(oauth.exchange.code(
                     token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
                     scope: ['*'],
                     explicit: true,
-                    expires: Date.now() + 600*1000,
+                    expires: Date.now() + 86400*1000,
                     updatedAt: new Date(),
                     clientId: grantCode.clientId,
                     userId: grantCode.userId
@@ -252,7 +252,7 @@ server.exchange(oauth.exchange.clientCredentials((client, scope, done) => {
          token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
          scope: ['*'],
          explicit: false,
-         expires: Date.now() + 600*1000,
+         expires: Date.now() + 86400*1000,
          clientId: client.get().id,
          userId: null
      }).then((Authtoken) => {

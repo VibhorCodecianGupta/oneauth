@@ -4,7 +4,7 @@ config = {
   "FACEBOOK_LOGIN_SCOPES": ["email", "public_profile"],
   "TWITTER_CALLBACK": "/login/twitter/callback",
   "GITHUB_CALLBACK": "/login/github/callback",
-  "GOOGLE_CALLBACK": "/login/google/callback",  
+  "GOOGLE_CALLBACK": "/login/google/callback",
   "GRANT_TOKEN_SIZE": 32,
   "AUTH_TOKEN_SIZE": 64,
   "REFRESH_TOKEN_SIZE": 64,
@@ -18,7 +18,7 @@ config = {
   "VERIFY_EMAIL" :"3e470c46-5d2b-471e-992e-4820f1599de3"
 };
 
-config.DEPLOY_CONFIG = process.env.ONEAUTH_DEV || 'production';
+config.DEPLOY_CONFIG = process.env.ONEAUTH_DEV || 'localhost';
 
 switch (config.DEPLOY_CONFIG) {
 
@@ -26,7 +26,7 @@ switch (config.DEPLOY_CONFIG) {
   case 'localhost':
     config.SERVER_URL = 'http://localhost:3838'
     config.DEBUG = true
-    config.SECRETS = require('./secrets-sample.json')
+    config.SECRETS = require('./secrets.json')
     break;
 
 

@@ -12,7 +12,6 @@ const passutils = require('../../../utils/password')
  * This is to authenticate _users_ using a username and password
  * via a simple post request
  */
-
 module.exports = new LocalStrategy(function (username, password, cb) {
 
     Raven.setContext({extra: {file: 'localstrategy'}})
@@ -26,7 +25,6 @@ module.exports = new LocalStrategy(function (username, password, cb) {
         passutils.compare2hash(password, userLocal.password)
             .then(function (match) {
                 if (match) {
-                  //console.log('Hey!')
                     return cb(null, userLocal.user.get())
                 } else {
                     return cb(null, false, {message: 'Invalid Password'})

@@ -54,6 +54,7 @@ const UserLocal = db.define('userlocal', definitions.social.local)
 const UserFacebook = db.define('userfacebook', definitions.social.facebook)
 const UserTwitter = db.define('usertwitter', definitions.social.twitter)
 const UserGithub = db.define('usergithub', definitions.social.github)
+const UserGoogle = db.define('usergoogle',definitions.social.google)
 const UserLms = db.define('userlms', definitions.social.lms)
 
 UserLocal.belongsTo(User)
@@ -67,6 +68,9 @@ User.hasOne(UserTwitter)
 
 UserGithub.belongsTo(User)
 User.hasOne(UserGithub)
+
+UserGoogle.belongsTo(User)
+User.hasOne(UserGoogle)
 
 UserLms.belongsTo(User)
 User.hasOne(UserLms)

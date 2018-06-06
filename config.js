@@ -4,6 +4,7 @@ config = {
   "FACEBOOK_LOGIN_SCOPES": ["email", "public_profile"],
   "TWITTER_CALLBACK": "/login/twitter/callback",
   "GITHUB_CALLBACK": "/login/github/callback",
+  "GOOGLE_CALLBACK": "/login/google/callback",  
   "GRANT_TOKEN_SIZE": 32,
   "AUTH_TOKEN_SIZE": 64,
   "REFRESH_TOKEN_SIZE": 64,

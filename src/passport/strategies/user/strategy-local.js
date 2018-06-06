@@ -26,6 +26,7 @@ module.exports = new LocalStrategy(function (username, password, cb) {
         passutils.compare2hash(password, userLocal.password)
             .then(function (match) {
                 if (match) {
+                  //console.log('Hey!')
                     return cb(null, userLocal.user.get())
                 } else {
                     return cb(null, false, {message: 'Invalid Password'})

@@ -18,7 +18,7 @@ config = {
   "VERIFY_EMAIL" :"3e470c46-5d2b-471e-992e-4820f1599de3"
 };
 
-config.DEPLOY_CONFIG = process.env.ONEAUTH_DEV || 'localhost';
+config.DEPLOY_CONFIG = process.env.ONEAUTH_DEV || 'production';
 
 switch (config.DEPLOY_CONFIG) {
 
@@ -26,7 +26,7 @@ switch (config.DEPLOY_CONFIG) {
   case 'localhost':
     config.SERVER_URL = 'http://localhost:3838'
     config.DEBUG = true
-    config.SECRETS = require('./secrets.json')
+    config.SECRETS = require('./secrets-sample.json')
     break;
 
 

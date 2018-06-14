@@ -35,10 +35,11 @@ const User = db.define('user', {
     photo: Sequelize.DataTypes.STRING,
     email: Sequelize.DataTypes.STRING,
     role: {type: Sequelize.DataTypes.ENUM('admin', 'employee', 'intern'), allowNull: true},
-    verifiedemail: {type: Sequelize.DataTypes.STRING, defaultValue: null, unique: true, allowNull: true}
-}, {
+    verifiedemail: {type: Sequelize.DataTypes.STRING, defaultValue: null, unique: true, allowNull: true},
+    graduationYear: Sequelize.DataTypes.INTEGER
+}/*, {
     paranoid: true
-})
+}*/)
 
 const Resetpassword = db.define('resetpassword', {
     id: {type: Sequelize.DataTypes.BIGINT, autoIncrement: true, primaryKey: true},
@@ -166,7 +167,7 @@ Branch.hasMany(Demographic)
 
 if (!process.env.ONEAUTH_DB_NO_SYNC) {
     db.sync({
-        alter: process.env.ONEAUTH_ALTER_TABLE || false,
+        alter: true,
         force: config.DEPLOY_CONFIG === 'heroku', // Clear DB on each run on heroku
     }).then(() => {
         console.log('Database configured')

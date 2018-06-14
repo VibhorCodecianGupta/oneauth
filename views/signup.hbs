@@ -25,6 +25,13 @@
             <option value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
         {{/each}}
     </select>
+    <label>Year of graduation:</label>
+    <select name="grad" class="m-2a form-control">
+          <option selected value="none"> </option> 
+        {{#for 1990 2040 1}}
+          <option value="{{this}}" {{#selected}}selected="selected"{{/selected}}>{{this}}</option>
+        {{/for}}
+    </select>
     <div class="row">
         <input class="btn btn-primary mx-auto" type="submit" value="Signup">
     </div>

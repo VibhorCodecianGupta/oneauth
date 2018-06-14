@@ -28,6 +28,10 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), function (req, res) {
         req.flash('error', 'Password too weak. Use 5 characters at least.')
         return res.redirect('/signup')
     }
+    if (req.body.graduationYear.trim() === '') {
+        req.flash('error', 'Graduation year cannot be empty')
+        return res.redirect('/signup')
+    }
 
     models.User.findOne({where: {username: req.body.username}})
         .then((user) => {
@@ -43,6 +47,7 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), function (req, res) {
                             firstname: req.body.firstname,
                             lastname: req.body.lastname,
                             email: req.body.email,
+                            graduationYear: req.body.graduationYear,
                             demographic: {
                                 branchId: req.body.branchId,
                                 collegeId: req.body.collegeId,

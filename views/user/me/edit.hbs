@@ -66,6 +66,14 @@
         </select>
     </div>
     <div class="form-group row" id="profile-row-id">
+      <label>Year of graduation:</label>
+      <select name="grad" class="m-2a form-control">
+        {{#for 1990 2040 1}}
+          <option value="{{this}}" {{#selected}}selected="selected"{{/selected}}>{{this}}</option>
+        {{/for}}
+      </select>
+    </div>
+    <div class="form-group row" id="profile-row-id">
         <label>Branch Name:</label>
         <select name="branchId" class="m-2a form-control">
             {{#each branches}}

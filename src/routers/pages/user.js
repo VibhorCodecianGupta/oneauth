@@ -115,7 +115,10 @@ router.post('/me/edit',
 
             user.firstname = req.body.firstname
             user.lastname = req.body.lastname
-            user.graduationYear = req.body.graduationYear
+
+            if (req.body.graduationYear) {
+                user.graduationYear = req.body.graduationYear
+            }
 
             if (!user.verifiedemail && req.body.email !== user.email) {
                 user.email = req.body.email

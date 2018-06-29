@@ -37,9 +37,9 @@ const User = db.define('user', {
     role: {type: Sequelize.DataTypes.ENUM('admin', 'employee', 'intern'), allowNull: true},
     verifiedemail: {type: Sequelize.DataTypes.STRING, defaultValue: null, unique: true, allowNull: true},
     graduationYear: Sequelize.DataTypes.INTEGER
-}/*, {
+}, {
     paranoid: true
-}*/)
+})
 
 const Resetpassword = db.define('resetpassword', {
     id: {type: Sequelize.DataTypes.BIGINT, autoIncrement: true, primaryKey: true},

@@ -56,6 +56,10 @@
             <p class="font-weight-bold custom-profile-padding col-6"> Branch Name: </p>
             <p class="custom-profile-padding col-6"> {{user.demographic.branch.name}} </p>
         </div>
+        <div id="profile-row-graduationYear" class="row">
+            <p class="font-weight-bold custom-profile-padding col-6"> Graduation Year: </p>
+            <p class="custom-profile-padding col-6"> {{user.graduationYear}} </p>
+        </div>
         {{#if user.role}}
             <div id="profile-row-role" class="row">
                 <p class="font-weight-bold custom-profile-padding col-6"> Role@CB: </p>

@@ -112,9 +112,11 @@ router.post('/me/edit',
                 include: [models.Demographic]
             })
             const demographic = user.demographic || {};
-            
+
             user.firstname = req.body.firstname
             user.lastname = req.body.lastname
+            user.graduationYear = req.body.graduationYear
+
             if (!user.verifiedemail && req.body.email !== user.email) {
                 user.email = req.body.email
             }
@@ -217,6 +219,7 @@ router.post('/:id/edit',
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
                 email: req.body.email,
+                graduationYear: req.body.graduationYear,
                 role: req.body.role !== 'unchanged' ? req.body.role : undefined
             },
             {

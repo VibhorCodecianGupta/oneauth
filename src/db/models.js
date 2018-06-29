@@ -35,7 +35,8 @@ const User = db.define('user', {
     photo: Sequelize.DataTypes.STRING,
     email: Sequelize.DataTypes.STRING,
     role: {type: Sequelize.DataTypes.ENUM('admin', 'employee', 'intern'), allowNull: true},
-    verifiedemail: {type: Sequelize.DataTypes.STRING, defaultValue: null, unique: true, allowNull: true}
+    verifiedemail: {type: Sequelize.DataTypes.STRING, defaultValue: null, unique: true, allowNull: true},
+    graduationYear: Sequelize.DataTypes.INTEGER
 }, {
     paranoid: true
 })

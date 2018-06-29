@@ -1,1 +1,1 @@
-alter table users add column "graduationYear" integer default 1990;
+alter table users add column "graduationYear" integer default null ;

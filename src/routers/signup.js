@@ -28,10 +28,6 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), function (req, res) {
         req.flash('error', 'Password too weak. Use 5 characters at least.')
         return res.redirect('/signup')
     }
-    // if (req.body.graduationYear == null) {
-    //     req.flash('error', 'Graduation year cannot be empty')
-    //     return res.redirect('/signup')
-    // }
 
     models.User.findOne({where: {username: req.body.username}})
         .then((user) => {

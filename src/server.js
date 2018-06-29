@@ -16,6 +16,7 @@ const express = require('express')
 
 const config = require('../config')
     , secrets = config.SECRETS
+    , {sessionStore, saveIp} = require('./middlewares/sessionstore')
     , loginrouter = require('./routers/login')
     , connectrouter = require('./routers/connect')
     , disconnectrouter = require('./routers/disconnect')
@@ -31,6 +32,8 @@ const config = require('../config')
       handlebarsHelpers = require('./utils/handlebars');
 
 const app = express()
+
+app.set('trust proxy', 'loopback, linklocal, uniquelocal')
 
 // ============== START DATADOG
 app.use(expresstracer)
@@ -75,14 +78,17 @@ app.use(express.static(path.join(__dirname, '../public_static')))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(session({
+    store: sessionStore,
     secret: secrets.EXPRESS_SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     name: 'oneauth',
     cookie: {
-        domain: config.COOKIE_DOMAIN
+        domain: config.COOKIE_DOMAIN,
+        maxAge: 86400000
     }
 }))
+app.use(saveIp)
 app.use(flash())
 app.use(passport.initialize())
 app.use(passport.session())

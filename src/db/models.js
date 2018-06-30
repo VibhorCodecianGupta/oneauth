@@ -88,8 +88,8 @@ const Client = db.define('client', {
     secret: Sequelize.DataTypes.STRING,
     domain: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
     callbackURL: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
-    trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false}
-
+    trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false},
+    defaultURL: {type: Sequelize.DataTypes.STRING, allowNull:false, default: 'https://codingblocks.com/'},
 })
 
 Client.belongsTo(User)
@@ -167,7 +167,7 @@ Branch.hasMany(Demographic)
 if (!process.env.ONEAUTH_DB_NO_SYNC) {
     db.sync({
         alter: process.env.ONEAUTH_ALTER_TABLE || false,
-        force: config.DEPLOY_CONFIG === 'heroku', // Clear DB on each run on heroku
+        force: process.env.ONEAUTH_DROP_TABLES || (config.DEPLOY_CONFIG === 'heroku'), // Clear DB on each run on heroku
     }).then(() => {
         console.log('Database configured')
     }).catch(err => console.error(err))

@@ -9,58 +9,52 @@ const passutils = require('../../utils/password')
 const models = require('../../db/models').models
 const acl = require('../../middlewares/acl')
 const multer = require('../../utils/multer')
+const { getUserById, updateUserLocal, updateUser } = require('../../controllers/user')
+const { updateDemographic, getColleges, getBranches } = require('../../controllers/demographics')
+const { getAllClientsForUser } = require('../../controllers/client')
 
 router.get('/me',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
+    async (req, res, next) => {
+      try {
+        let includes = []
+        includes.push(
+          models.UserGithub,
+          models.UserGoogle,
+          models.UserFacebook,
+          models.UserLms,
+          models.UserTwitter,
+          {
+            model: models.Demographic,
+            include: [models.College, models.Branch, models.Company]
+          }
+        )
 
-        models.User.findOne({
-            where: {id: req.user.id},
-            include: [
-                models.UserGithub,
-                models.UserGoogle,
-                models.UserFacebook,
-                models.UserLms,
-                models.UserTwitter,
-                {
-                    model: models.Demographic,
-                    include: [
-                        models.College,
-                        models.Branch,
-                        models.Company,
-                    ]
-                }
-            ]
-        }).then(function (user) {
-            if (!user) {
-                res.redirect('/login')
-            }
-            return res.render('user/me', {user: user})
-        }).catch(function (err) {
-            throw err
-        })
+        const user = await getUserById(req.user.id, includes)
+        if (!user) {
+            res.redirect('/login')
+        }
+        res.render('user/me', {user: user})
 
-    })
+      } catch(err) {
+          throw err
+      }
+  })
 
 router.get('/me/edit',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
+    async (req, res, next) => {
+        let includes = []
+        includes.push(
+          {
+            model: models.Demographic,
+            include: [models.College, models.Branch, models.Company]
+          }
+        )
         Promise.all([
-            models.User.findOne({
-                where: {id: req.user.id},
-                include: [
-                    {
-                        model: models.Demographic,
-                        include: [
-                            models.College,
-                            models.Branch,
-                            models.Company,
-                        ]
-                    }
-                ]
-            }),
-            models.College.findAll({}),
-            models.Branch.findAll({})
+          await getUserById(req.user.id, includes),
+          await getColleges(),
+          await getBranches()
         ]).then(function ([user, colleges, branches]) {
             if (!user) {
                 res.redirect('/login')
@@ -107,12 +101,11 @@ router.post('/me/edit',
         }
 
         try {
-            const user = await models.User.findOne({
-                where: {id: req.user.id},
-                include: [models.Demographic]
-            })
+            let includes = [models.Demographic]
+
+            const user = await getUserById(req.user.id, includes)
             const demographic = user.demographic || {};
-            
+
             user.firstname = req.body.firstname
             user.lastname = req.body.lastname
             if (!user.verifiedemail && req.body.email !== user.email) {
@@ -142,19 +135,11 @@ router.post('/me/edit',
             if (req.body.collegeId) {
                 demographic.collegeId = +req.body.collegeId
             }
-            await models.Demographic.upsert(demographic, {
-                where: {
-                    userId: req.user.id
-                }
-            })
+            await updateDemographic(demographic, req.user.id)
 
             if (req.body.password) {
                 const passHash = await passutils.pass2hash(req.body.password)
-                await models.UserLocal.update({
-                    password: passHash
-                }, {
-                    where: {userId: req.user.id}
-                })
+                await updateUserLocal(req.user.id)
             }
             res.redirect('/users/me')
         } catch (err) {
@@ -168,78 +153,72 @@ router.post('/me/edit',
 router.get('/:id',
     cel.ensureLoggedIn('/login'),
     acl.ensureRole('admin'),
-    function (req, res, next) {
+    async (req, res, next) => {
+      try {
+          let includes = [models.UserGithub, models.UserGoogle, models.UserFacebook, models.UserLms, models.UserTwitter]
 
-        models.User.findOne({
-            where: {id: req.params.id},
-            include: [
-                models.UserGithub,
-                models.UserGoogle,
-                models.UserFacebook,
-                models.UserLms,
-                models.UserTwitter
-            ]
-        }).then(function (user) {
-            if (!user) {
-                return res.status(404).send({error: "Not found"})
-            }
-            return res.render('user/id', {user: user})
-        }).catch(function (err) {
-            throw err
-        })
+          const user = await getUserById(req.params.id, includes)
+          if (!user) {
+              return res.status(404).send({error: "Not found"})
+          }
+          res.render('user/id', {user: user})
+
+      } catch(err) {
+          throw err
+      }
     }
 )
 
 router.get('/:id/edit',
     cel.ensureLoggedIn('/login'),
     acl.ensureRole('admin'),
-    function (req, res, next) {
+    async (req, res, next) => {
+      try {
+          const user = getUserById(req.params.id)
+          if (!user) {
+              return res.status(404).send({error: "Not found"})
+          }
+          res.render('user/id/edit', {user: user})
 
-        models.User.findOne({
-            where: {id: req.params.id},
-        }).then(function (user) {
-            if (!user) {
-                return res.status(404).send({error: "Not found"})
-            }
-            return res.render('user/id/edit', {user: user})
-        }).catch(function (err) {
-            throw err
-        })
+      } catch(err) {
+          throw err
+      }
     }
 )
 
 router.post('/:id/edit',
     cel.ensureLoggedIn('/login'),
     acl.ensureRole('admin'),
-    function (req, res, next) {
+    async (req, res, next) => {
+      try {
+          const params = {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            role: req.body.role !== 'unchanged' ? req.body.role : undefined
+          }
+          const result = await updateUser(params, req.params.id)
+          res.redirect('../' + req.params.id)
 
-        models.User.update({
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                role: req.body.role !== 'unchanged' ? req.body.role : undefined
-            },
-            {
-                where: {id: req.params.id},
-                returning: true
-            }).then(function (result) {
-            return res.redirect('../' + req.params.id)
-        }).catch(function (err) {
-            throw err
-        })
+      } catch(err) {
+          throw err
+      }
     }
 )
 
 router.get('/me/clients',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Client.findAll({
-            where: {userId: req.user.id}
-        }).then(function (clients) {
-            return res.render('client/all', {clients: clients})
-        }).catch(function (err) {
-            res.send("No clients registered")
-        })
+    async (req, res, next) => {
+      try {
+          const clients = await getAllClientsForUser(req.user.id)
+          if (!clients || !clients.length) {
+              res.send("No clients registered")
+          }
+          res.render('client/all', {clients: clients})
+
+      } catch (err) {
+          res.send("Could not find any clients")
+      }
     }
 )
 

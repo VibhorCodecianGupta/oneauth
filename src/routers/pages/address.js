@@ -1,31 +1,37 @@
 const router = require('express').Router()
 const cel = require('connect-ensure-login')
 const Raven = require('raven')
-
+const { getAddress, getAllAddresses, getStates, getCountries } = require('../../controllers/demographics')
 const models = require('../../db/models').models
 
 router.get('/',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Address.findAll({
-            where: {'$demographic.userId$': req.user.id},
-            include: [models.Demographic]
-        }).then(function (addresses) {
-            return res.render('address/all', {addresses})
-        }).catch(function (err) {
-            Raven.captureException(err)
-            req.flash('error', 'Something went wrong trying to query address database')
-            return res.redirect('/users/me')
-        })
+    async (req, res, next) => {
+
+      try {
+          let includes = [models.Demographic]
+          const addresses = await getAllAddresses(req.user.id, includes)
+
+          if (!addresses || !addresses.length) {
+            req.flash('error', 'No addresses found')
+            res.redirect('.')
+          }
+          res.render('address/all', {addresses})
+
+      } catch(err) {
+          Raven.captureException(err)
+          req.flash('error', 'Something went wrong trying to query address database')
+          res.redirect('/users/me')
+      }
     }
 )
 
 router.get('/add',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
+    async (req, res, next) => {
         Promise.all([
-            models.State.findAll({}),
-            models.Country.findAll({})
+            await getStates(),
+            await getCountries()
         ]).then(function ([states, countries]) {
             return res.render('address/add', {states, countries})
         }).catch(function (err) {
@@ -36,41 +42,31 @@ router.get('/add',
 
 router.get('/:id',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
-        models.Address.findOne({
-            where: {
-                id: req.params.id,
-                '$demographic.userId$': req.user.id
-            },
-            include: [models.Demographic, models.State, models.Country]
-        }).then(function (address) {
-            if (!address) {
-                req.flash('error', 'Address not found')
-                return res.redirect('.')
-            }
-            return res.render('address/id', {address})
-        }).catch((err) => {
-            Raven.captureException(err)
-            req.flash('error', 'Something went wrong trying to query address database')
-            return res.redirect('/users/me')
-        })
+    async (req, res, next) => {
+      try {
+          const address = await getAddress(req.params.id, req.user.id)
+          if (!address) {
+              req.flash('error', 'Address not found')
+              res.redirect('.')
+          }
+          res.render('address/id', {address})
+
+      } catch(err) {
+        Raven.captureException(err)
+        req.flash('error', 'Something went wrong trying to query address database')
+        res.redirect('/users/me')
+      }
     }
 )
 
 
 router.get('/:id/edit',
     cel.ensureLoggedIn('/login'),
-    function (req, res, next) {
+    async (req, res, next) => {
         Promise.all([
-            models.Address.findOne({
-                where: {
-                    id: req.params.id,
-                    '$demographic.userId$': req.user.id
-                },
-                include: [models.Demographic, models.State, models.Country]
-            }),
-            models.State.findAll({}),
-            models.Country.findAll({})
+            await getAddress(req.params.id, req.user.id),
+            await getStates(),
+            await getCountries()
         ]).then(function ([address, states, countries]) {
             if (!address) {
                 req.flash('error', 'Address not found')

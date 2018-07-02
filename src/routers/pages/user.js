@@ -139,7 +139,7 @@ router.post('/me/edit',
 
             if (req.body.password) {
                 const passHash = await passutils.pass2hash(req.body.password)
-                await updateUserLocal(req.user.id)
+                await updateUserLocal(req.user.id, passHash)
             }
             res.redirect('/users/me')
         } catch (err) {
@@ -197,7 +197,7 @@ router.post('/:id/edit',
             email: req.body.email,
             role: req.body.role !== 'unchanged' ? req.body.role : undefined
           }
-          const result = await updateUser(params, req.params.id)
+          const result = await updateUser(params, req.params.id, true)
           res.redirect('../' + req.params.id)
 
       } catch(err) {

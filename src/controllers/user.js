@@ -7,6 +7,10 @@ const getUserById = function(id, includes) {
     })
 }
 
+const getUserByParams = function(params) {
+  return models.User.findOne({where: params})
+}
+
 const getUserOfTrustedClient = function(id, trustedClient) {
   return models.User.findOne({
       attributes: trustedClient ? undefined: ['id', 'username', 'photo'],
@@ -14,18 +18,18 @@ const getUserOfTrustedClient = function(id, trustedClient) {
     })
 }
 
-const updateUserLocal = function(id) {
-  return models.UserLocal.update({password: passHash}, {where: {userId: id}})
+const updateUserLocal = function(id, pass) {
+  return models.UserLocal.update({password: pass}, {where: {userId: id}})
 }
 
-const updateUser = function(params, id) {
+const updateUser = function(params, id, bool) {
   return models.User.update(params,
         {
           where: {id:id},
-          returning: true
+          returning: bool
         })
 }
 
 module.exports = {
-  getUserById, getUserOfTrustedClient, updateUserLocal, updateUser
+  getUserById, getUserOfTrustedClient, updateUserLocal, updateUser, getUserByParams
 }

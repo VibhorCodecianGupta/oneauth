@@ -103,7 +103,7 @@ router.post('/password', makeGaEvent('submit', 'form', 'resetpassword'), functio
     })
 })
 
-router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'), function (req, res) {
+router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'), async function (req, res) {
   req.body.key = req.body.key.trim()
   req.body.password = req.body.password.trim()
   req.body.passwordagain = req.body.passwordagain.trim()
@@ -149,7 +149,6 @@ router.post('/password/new', makeGaEvent('submit', 'form', 'forgot.password.new'
           .then(([userlocal, passhash]) => {
 
               if (userlocal) {
-
                 return models.UserLocal.update(
                   {password: passhash},
                   {where: {userId: userlocal.dataValues.userId}}

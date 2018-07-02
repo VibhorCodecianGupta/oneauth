@@ -11,6 +11,8 @@ const UserStrategies = require('./strategies/user')
 const models = require('../db/models').models
 
 const config = require('../../config')
+const { getUserById } = require('../controllers/user')
+const { getClientById } = require('../controllers/client')
 
 passport.use(UserStrategies.localStrategy)
 passport.use(UserStrategies.fbStrategy)
@@ -49,14 +51,14 @@ passport.deserializeUser(async (idHash, cb) => {
     debug(idHash)
     try {
         if (idHash.type === 'user') {
-            const user = await models.User.findOne({where: {id: idHash.id}})
+            const user = await getUserById(idHash.id)
             if (process.env.ONEAUTH_DEV === 'localhost') {
                 user.role = 'admin'
             }
             return cb(null, user)
         }
         if (idHash.type === 'client') {
-            const client = await models.Client.findOne({where: {id: idHash.id}})
+            const client = await getClientById(idHash.id)
             return cb(null, client)
         }
     } catch (err) {
@@ -67,4 +69,3 @@ passport.deserializeUser(async (idHash, cb) => {
 passport.transformAuthInfo((info, done) => done(null, info))
 
 module.exports = passport
-

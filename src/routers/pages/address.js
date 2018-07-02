@@ -24,14 +24,14 @@ router.get('/',
 router.get('/add',
     cel.ensureLoggedIn('/login'),
     async (req, res, next) => {
-        Promise.all([
-            await getStates(),
-            await getCountries()
-        ]).then(function ([states, countries]) {
-            return res.render('address/add', {states, countries})
-        }).catch(function (err) {
-            res.send("Error Fetching Data.")
-        })
+      try {
+          const [states, countries] =
+            await Promise.all([ getStates(), getCountries()])
+            res.render('address/add', {states, countries})
+
+      } catch(err) {
+        res.send("Error Fetching Data.")
+      }
     }
 )
 
@@ -58,21 +58,21 @@ router.get('/:id',
 router.get('/:id/edit',
     cel.ensureLoggedIn('/login'),
     async (req, res, next) => {
-        Promise.all([
-            await getAddress(req.params.id, req.user.id),
-            await getStates(),
-            await getCountries()
-        ]).then(function ([address, states, countries]) {
-            if (!address) {
-                req.flash('error', 'Address not found')
-                return res.redirect('.')
-            }
-            return res.render('address/edit', {address, states, countries})
-        }).catch((err) => {
-            Raven.captureException(err)
-            req.flash('error', 'Something went wrong trying to query address database')
-            return res.redirect('/users/me')
-        })
+      try {
+        const [address, states, countries] =
+          await Promise.all([getAddress(req.params.id,req.user.id), getStates(), getCountries()])
+
+          if (!address) {
+              req.flash('error', 'Address not found')
+              return res.redirect('.')
+          }
+          return res.render('address/edit', {address, states, countries})
+
+      } catch(err) {
+          Raven.captureException(err)
+          req.flash('error', 'Something went wrong trying to query address database')
+          return res.redirect('/users/me')
+      }
     }
 )
 

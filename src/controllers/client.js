@@ -4,20 +4,14 @@ const urlutils = require('../utils/urlutils')
 
 const getClientById = function(id) {
     return models.Client.findOne({where: {id: id}})
-        .then(client => resolve(client))
-        .catch(err => reject(err))
 }
 
 const getAllClients = function() {
   return models.Client.findAll({})
-  .then(clients => resolve(clients))
-  .catch(err => reject(err))
 }
 
 const getAllClientsForUser = function(userId) {
   return models.Client.findAll({where: {userId: userId}})
-  .then(clients => resolve(clients))
-  .catch(err => reject(err))
 }
 
 const addClient = function(payload) {
@@ -46,8 +40,6 @@ const addClient = function(payload) {
     }
 
   return models.Client.create(params)
-      .then(client => resolve(client))
-      .catch(err => reject(err))
 }
 
 
@@ -79,8 +71,6 @@ const editClient = function(payload) {
     }
 
   return models.Client.update(params, {where: {id: clientId}})
-      .then(client => resolve(client))
-      .catch(err => reject(err))
 }
 
 module.exports = {

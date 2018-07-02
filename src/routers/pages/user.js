@@ -211,9 +211,6 @@ router.get('/me/clients',
     async (req, res, next) => {
       try {
           const clients = await getAllClientsForUser(req.user.id)
-          if (!clients || !clients.length) {
-              res.send("No clients registered")
-          }
           res.render('client/all', {clients: clients})
 
       } catch (err) {

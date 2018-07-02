@@ -7,16 +7,14 @@ const generateGrantCode = function(clientId, userId) {
       code: generator.genNcharAlphaNum(config.GRANT_TOKEN_SIZE),
       clientId: clientId,
       userId: userId
-    }).then(grantCode => resolve(grantCode))
-    .catch(err => reject(err))
+    })
 }
 
 const findGrantCode = function(code) {
   return models.GrantCode.findOne({
       where: {code: code},
       include: [models.Client]
-    }).then(grantCode => resolve(grantCode))
-    .catch(err => reject(err))
+    })
 }
 
 const destroyGrantCode = function(grantCode) {
@@ -30,8 +28,7 @@ const generateRefreshToken = function(clientId, userId) {
       explicit: false,
       clientId: clientId,
       userId: userId
-    }).then(token => resolve(token))
-    .catch(err => reject(err))
+    })
 }
 
 const generateAuthToken = function(clientId, userId) {
@@ -41,8 +38,7 @@ const generateAuthToken = function(clientId, userId) {
       explicit: false,
       clientId: clientId,
       userId: userId
-  }).then(token => resolve(token))
-  .catch(err => reject(err))
+  })
 }
 
 const findAuthToken = function(clientId, userId) {
@@ -51,16 +47,14 @@ const findAuthToken = function(clientId, userId) {
           clientId: client.id,
           userId: user.id
         }
-    }).then(authToken => resolve(authToken))
-    .catch(err => reject(err))
+    })
 }
 
 const findAllTokens = function(userId) {
   return models.AuthToken.findAll({
         where: {userId: userId},
         include: [models.Client]
-      }).then(tokens => resolve(tokens))
-      .catch(err => reject(err))
+      })
 }
 
 const findCreateAuthToken = function(grantCode) {
@@ -77,8 +71,7 @@ const findCreateAuthToken = function(grantCode) {
             clientId: grantCode.clientId,
             userId: grantCode.userId
         }
-    }).then(token => resolve(token))
-    .catch(er => reject(err))
+    })
 }
 
 const destroyAuthToken = function(authToken) {

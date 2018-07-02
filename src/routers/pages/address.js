@@ -11,11 +11,6 @@ router.get('/',
       try {
           let includes = [models.Demographic]
           const addresses = await getAllAddresses(req.user.id, includes)
-
-          if (!addresses || !addresses.length) {
-            req.flash('error', 'No addresses found')
-            res.redirect('.')
-          }
           res.render('address/all', {addresses})
 
       } catch(err) {

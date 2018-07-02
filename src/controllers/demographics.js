@@ -4,20 +4,15 @@ const findCreateDemographics = function(id) {
     return models.Demographic.findCreateFind({
         where: {userId: id},
         include: [models.Address]
-    }).then(demographic => resolve(demographic))
-    .catch(err => reject(err))
+    })
 }
 
 const getDemographics = function(id) {
     return models.Demographic.findOne({where: {userId: id}})
-      .then(demographic => resolve(demographic))
-      .catch(err => reject(err))
 }
 
 const updateDemographic = function(demographic, id) {
     return models.Demographic.upsert(demographic, {where: {userId: req.user.id}})
-    .then(demog => resolve(demog))
-    .catch(err => reject(err))
 }
 
 const getAddress = function(addrId, userId) {
@@ -27,16 +22,14 @@ const getAddress = function(addrId, userId) {
             '$demographic.userId$': userId
         },
         include: [models.Demographic, models.State, models.Country]
-    }).then(addr => resolve(addr))
-    .catch(err => reject(err))
+    })
 }
 
 const getAllAddresses = function(id, includes) {
     return models.Address.findAll({
       where: {'$demographic.userId$': id},
       include: includes
-    }).then(addresses => resolve(addresses))
-    .catch(err => reject(err))
+    })
 }
 
 const createAddress = function(payload, demographics) {
@@ -58,14 +51,10 @@ const createAddress = function(payload, demographics) {
       primary: !demographics.get().addresses
     }
     return models.Address.create(params)
-    .then(addr => resolve(addr))
-    .catch(err => reject(err))
 }
 
 const updateAddressbyDemoId = function(id, params) {
     return models.Address.update(params, {where: {demographicId: id}})
-      .then(addr => resolve(addr))
-      .catch(err => reject(err))
 }
 
 const updateAddressbyId = function(payload, id) {
@@ -86,8 +75,6 @@ const updateAddressbyId = function(payload, id) {
     }
 
     return models.Address.update(params, {where: {id: id}})
-      .then(addr => resolve(addr))
-      .catch(err => reject(err))
 }
 
 const getStates = function() {

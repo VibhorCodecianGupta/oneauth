@@ -5,8 +5,6 @@ const getUserById = function(id, includes) {
       where: {id: id},
       include: includes
     })
-    .then(user => resolve(user))
-    .catch(err => reject(err))
 }
 
 const getUserOfTrustedClient = function(id, trustedClient) {
@@ -14,14 +12,10 @@ const getUserOfTrustedClient = function(id, trustedClient) {
       attributes: trustedClient ? undefined: ['id', 'username', 'photo'],
       where: {id: id}
     })
-    .then(user => resolve(user))
-    .catch(err => reject(err))
 }
 
 const updateUserLocal = function(id) {
   return models.UserLocal.update({password: passHash}, {where: {userId: id}})
-    .then(user => resolve(user))
-    .catch(err => reject(err))
 }
 
 const updateUser = function(params, id) {
@@ -30,8 +24,6 @@ const updateUser = function(params, id) {
           where: {id:id},
           returning: true
         })
-        .then(user => resolve(user))
-        .catch(err => reject(err))
 }
 
 module.exports = {

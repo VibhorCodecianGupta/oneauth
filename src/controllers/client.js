@@ -2,19 +2,19 @@ const {db, models} = require('../db/models')
 const generator = require('../utils/generator')
 const urlutils = require('../utils/urlutils')
 
-const getClientById = function(id) {
+function getClientById(id) {
     return models.Client.findOne({where: {id: id}})
 }
 
-const getAllClients = function() {
+function getAllClients() {
   return models.Client.findAll({})
 }
 
-const getAllClientsForUser = function(userId) {
+function getAllClientsForUser(userId) {
   return models.Client.findAll({where: {userId: userId}})
 }
 
-const addClient = function(payload) {
+function addClient(payload) {
     let clientName = payload.body.clientname
     let clientDomains = payload.body.domain.replace(/ /g, '').split(';')
     let clientCallbacks = payload.body.callback.replace(/ /g, '').split(';')
@@ -43,7 +43,7 @@ const addClient = function(payload) {
 }
 
 
-const editClient = function(payload) {
+function editClient(payload) {
     let clientId = parseInt(payload.params.id)
     let clientName = payload.body.clientname
     let clientDomains = payload.body.domain.replace(/ /g, '').split(';')

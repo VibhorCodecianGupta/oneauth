@@ -2,7 +2,7 @@ const {db, models} = require('../db/models')
 const generator = require('../utils/generator')
 const config = require('../../config')
 
-const generateGrantCode = function(clientId, userId) {
+function generateGrantCode(clientId, userId) {
   return models.GrantCode.create({
       code: generator.genNcharAlphaNum(config.GRANT_TOKEN_SIZE),
       clientId: clientId,
@@ -10,18 +10,18 @@ const generateGrantCode = function(clientId, userId) {
     })
 }
 
-const findGrantCode = function(code) {
+function findGrantCode(code) {
   return models.GrantCode.findOne({
       where: {code: code},
       include: [models.Client]
     })
 }
 
-const destroyGrantCode = function(grantCode) {
+function destroyGrantCode(grantCode) {
   return grantCode.destroy()
 }
 
-const generateRefreshToken = function(clientId, userId) {
+function generateRefreshToken(clientId, userId) {
   return models.AuthToken.create({
       token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
       scope: ['*'],
@@ -31,7 +31,7 @@ const generateRefreshToken = function(clientId, userId) {
     })
 }
 
-const generateAuthToken = function(clientId, userId) {
+function generateAuthToken(clientId, userId) {
   return models.AuthToken.create({
       token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
       scope: ['*'],
@@ -41,7 +41,7 @@ const generateAuthToken = function(clientId, userId) {
   })
 }
 
-const findAuthToken = function(clientId, userId) {
+function findAuthToken(clientId, userId) {
   return models.AuthToken.findOne({
         where: {
           clientId: client.id,
@@ -50,14 +50,14 @@ const findAuthToken = function(clientId, userId) {
     })
 }
 
-const findAllTokens = function(userId) {
+function findAllTokens(userId) {
   return models.AuthToken.findAll({
         where: {userId: userId},
         include: [models.Client]
       })
 }
 
-const findCreateAuthToken = function(grantCode) {
+function findOrCreateAuthToken(grantCode) {
   return models.AuthToken.findCreateFind({
         where: {
             clientId: grantCode.clientId,
@@ -74,12 +74,12 @@ const findCreateAuthToken = function(grantCode) {
     })
 }
 
-const destroyAuthToken = function(authToken) {
+function destroyAuthToken(authToken) {
   return models.AuthToken.destroy({where: { token: authToken }})
 }
 
 module.exports = {
   generateGrantCode, findGrantCode, destroyGrantCode, generateRefreshToken,
-  generateAuthToken, findAuthToken, findCreateAuthToken, destroyAuthToken,
+  generateAuthToken, findAuthToken, findOrCreateAuthToken, destroyAuthToken,
   findAllTokens
 }

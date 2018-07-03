@@ -1,21 +1,21 @@
 const {db, models} = require('../db/models')
 
-const findCreateDemographics = function(id) {
+function findOrCreateDemographics(id) {
     return models.Demographic.findCreateFind({
         where: {userId: id},
         include: [models.Address]
     })
 }
 
-const getDemographics = function(id) {
+function getDemographics(id) {
     return models.Demographic.findOne({where: {userId: id}})
 }
 
-const updateDemographic = function(demographic, id) {
+function updateDemographic(demographic, id) {
     return models.Demographic.upsert(demographic, {where: {userId: req.user.id}})
 }
 
-const getAddress = function(addrId, userId) {
+function getAddress(addrId, userId) {
     return models.Address.findOne({
         where: {
             id: addrId,
@@ -25,14 +25,14 @@ const getAddress = function(addrId, userId) {
     })
 }
 
-const getAllAddresses = function(id, includes) {
+function getAllAddresses(id, includes) {
     return models.Address.findAll({
       where: {'$demographic.userId$': id},
       include: includes
     })
 }
 
-const createAddress = function(payload, demographics) {
+function createAddress(payload, demographics) {
 
     const params = {
       label: payload.body.label,
@@ -53,11 +53,11 @@ const createAddress = function(payload, demographics) {
     return models.Address.create(params)
 }
 
-const updateAddressbyDemoId = function(id, params) {
+function updateAddressbyDemoId(id, params) {
     return models.Address.update(params, {where: {demographicId: id}})
 }
 
-const updateAddressbyId = function(payload, id) {
+function updateAddressbyId(payload, id) {
 
     const params = {
       label: payload.body.label,
@@ -77,24 +77,24 @@ const updateAddressbyId = function(payload, id) {
     return models.Address.update(params, {where: {id: id}})
 }
 
-const getStates = function() {
+function getStates() {
     return models.State.findAll({})
 }
 
-const getCountries = function() {
+function getCountries() {
     return models.Country.findAll({})
 }
 
-const getColleges = function() {
+function getColleges() {
     return models.College.findAll({})
 }
 
-const getBranches = function() {
+function getBranches() {
     return models.Branch.findAll({})
 }
 
 module.exports = {
-  findCreateDemographics, getDemographics, createAddress,
+  findOrCreateDemographics, getDemographics, createAddress,
   updateAddressbyDemoId, updateAddressbyId, getAllAddresses,
   getStates, getCountries, getAddress, getColleges, getBranches,
   updateDemographic

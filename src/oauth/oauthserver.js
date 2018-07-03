@@ -11,7 +11,7 @@ const models = require('../db/models').models
     , debug = require('debug')('oauth:oauthserver')
 
 const { getClientById } = require('../controllers/client')
-const { generateGrantCode, generateRefreshToken, generateAuthToken, findAuthToken, findGrantCode, destroyGrantCode, findCreateAuthToken } = require('../controllers/oauth')
+const { generateGrantCode, generateRefreshToken, generateAuthToken, findAuthToken, findGrantCode, destroyGrantCode, findOrCreateAuthToken } = require('../controllers/oauth')
 
 const server = oauth.createServer()
 
@@ -84,7 +84,7 @@ server.exchange(oauth.exchange.code(
             }
 
             try {
-                const [authToken, created] = findCreateAuthToken(grantCode)
+                const [authToken, created] = findOrCreateAuthToken(grantCode)
                 return done(null, authToken.token)
                 await destroyGrantCode(grantCode)
 

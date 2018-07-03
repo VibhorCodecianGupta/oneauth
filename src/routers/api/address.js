@@ -5,7 +5,7 @@ const cel = require('connect-ensure-login')
 const Raven = require('raven')
 const urlutils = require('../../utils/urlutils')
 const {hasNull} = require('../../utils/nullCheck')
-const { findCreateDemographics, getDemographics, createAddress, updateAddressbyDemoId, updateAddressbyId } = require('../../controllers/demographics')
+const { findOrCreateDemographics, getDemographics, createAddress, updateAddressbyDemoId, updateAddressbyId } = require('../../controllers/demographics')
 
 router.post('/', cel.ensureLoggedIn('/login'), async (req, res) => {
     if (hasNull(req.body, ['label', 'first_name', 'last_name', 'number', 'email', 'pincode', 'street_address', 'landmark', 'city', 'stateId', 'countryId'])) {
@@ -15,7 +15,7 @@ router.post('/', cel.ensureLoggedIn('/login'), async (req, res) => {
          var redirectUrl = req.query.returnTo;
         }
         try {
-            const [demographic, created] = await findCreateDemographics(req.user.id)
+            const [demographic, created] = await findOrCreateDemographics(req.user.id)
             const address = await createAddress(req, demographic)
 
             if (req.body.returnTo) {

@@ -51,19 +51,18 @@ router.get('/me/edit',
             include: [models.College, models.Branch, models.Company]
           }
         )
-        Promise.all([
-          await getUserById(req.user.id, includes),
-          await getColleges(),
-          await getBranches()
-        ]).then(function ([user, colleges, branches]) {
+        try {
+            const [user, colleges, branches] =
+            await Promise.all([getUserById(req.user.id, includes), getColleges(), getBranches()])
             if (!user) {
                 res.redirect('/login')
             }
-            return res.render('user/me/edit', {user, colleges, branches})
-        }).catch(function (err) {
-            throw err
-        })
+            res.render('user/me/edit', {user, colleges, branches})
 
+        } catch(err) {
+            Raven.captureException(err)
+            res.redirect('/user/me')
+        }
     }
 )
 

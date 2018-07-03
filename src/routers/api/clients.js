@@ -10,10 +10,10 @@ const Raven = require('raven')
 const { addClient, editClient } = require('../../controllers/client')
 
 
-router.post('/add', cel.ensureLoggedIn('/login'), async (req, res) => {
-  // if (!req.user) {
-  //        return res.status(403).send("Only logged in users can make clients")
-  // }
+router.post('/add', async (req, res) => {
+  if (!req.user) {
+         return res.status(403).send("Only logged in users can make clients")
+  }
 
     try {
         const client = await addClient(req)

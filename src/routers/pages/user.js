@@ -37,7 +37,8 @@ router.get('/me',
         res.render('user/me', {user: user})
 
       } catch(err) {
-          throw err
+          Raven.captureException(err)
+          res.status(500).json({error: error})
       }
   })
 
@@ -61,6 +62,7 @@ router.get('/me/edit',
 
         } catch(err) {
             Raven.captureException(err)
+            req.flash('error', 'Error in Server')
             res.redirect('/user/me')
         }
     }
@@ -163,7 +165,9 @@ router.get('/:id',
           res.render('user/id', {user: user})
 
       } catch(err) {
-          throw err
+          Raven.captureException(err)
+          req.flash('error','Could not fetch user')
+          res.redirect('user/me')
       }
     }
 )
@@ -180,7 +184,9 @@ router.get('/:id/edit',
           res.render('user/id/edit', {user: user})
 
       } catch(err) {
-          throw err
+          Raven.captureException(err)
+          req.flash('error', 'Error in Server')
+          res.redirect('user/id')
       }
     }
 )
@@ -200,7 +206,9 @@ router.post('/:id/edit',
           res.redirect('../' + req.params.id)
 
       } catch(err) {
-          throw err
+          Raven.captureException(err)
+          req.flash('error','Could not update User')
+          res.redirect('user/id')
       }
     }
 )
@@ -213,7 +221,9 @@ router.get('/me/clients',
           res.render('client/all', {clients: clients})
 
       } catch (err) {
-          res.send("Could not find any clients")
+          Raven.captureException(err)
+          req.flash('error','Could not find any clients')
+          res.redirect('user/me')
       }
     }
 )

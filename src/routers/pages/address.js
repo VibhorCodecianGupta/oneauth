@@ -47,9 +47,9 @@ router.get('/:id',
           res.render('address/id', {address})
 
       } catch(err) {
-        Raven.captureException(err)
-        req.flash('error', 'Something went wrong trying to query address database')
-        res.redirect('/users/me')
+          Raven.captureException(err)
+          req.flash('error', 'Something went wrong trying to query address database')
+          res.redirect('/users/me')
       }
     }
 )

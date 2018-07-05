@@ -4,6 +4,7 @@
 const router = require('express').Router()
 const cel = require('connect-ensure-login')
 const acl = require('../../middlewares/acl')
+const Raven = require('raven')
 const { getAllClients, getClientById } = require('../../controllers/client')
 
 const models = require('../../db/models').models
@@ -15,7 +16,8 @@ router.get('/',acl.ensureAdmin, async (req,res,next) => {
         res.render('client/all',{clients:clients})
 
     } catch(err) {
-        res.send("No clients Registered")
+        Raven.captureException(err)
+        req.flash('error','Something went wrong, could not fetch clients')
     }
 })
 
@@ -39,7 +41,9 @@ router.get('/:id',
           }
           res.render('client/id', {client: client})
       } catch(err) {
-
+          Raven.captureException(error)
+          req.flash('error','Something went wrong, could not fetch client')
+          res.redirect('client/all')
       }
     }
 )
@@ -61,7 +65,9 @@ router.get('/:id/edit',
 
           res.render('client/edit', {client: client})
       } catch(err) {
-
+          Raven.captureException(err)
+          req.flash('error','Something went wrong')
+          res.redirect('client/id')
       }
     }
 )

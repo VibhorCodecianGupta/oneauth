@@ -7,6 +7,8 @@ const router = require('express').Router()
 const cel = require('connect-ensure-login')
 const passport = require('../../passport/passporthandler')
 const models = require('../../db/models').models
+const Raven = require('raven')
+
 const { getUserById, getUserOfTrustedClient } = require('../../controllers/user')
 const { destroyAuthToken } = require('../../controllers/oauth')
 const { getAllAddresses } = require('../../controllers/demographics')
@@ -184,7 +186,7 @@ router.get('/:id/address',
         } catch(err) {
             Raven.captureException(err)
             req.flash('error', 'Something went wrong trying to query address database')
-            res.status(501).json({error: err.message})
+            res.status(500).json({error: err.message})
         }
     })
 

@@ -16,8 +16,8 @@ router.get('/',
           res.render('apps/all', {apps: apps})
 
       } catch(err) {
-          res.send("No clients registered")
-      }
+          Raven.captureException(err)
+          req.flash('error','Something went wrong, could not fetch apps')      }
     }
 )
 

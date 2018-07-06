@@ -34,8 +34,6 @@ function updateUserLocal(id, pass) {
   return models.UserLocal.update({password: pass}, {where: {userId: id}})
 }
 
-
-
 module.exports = {
   getUserById, getUserOfTrustedClient, updateUserLocal, updateUser, getUserByParams,
   createUserLocal

@@ -15,12 +15,7 @@ function getAllClientsForUser(userId) {
 }
 
 function addClient(params) {
-    let clientName = payload.body.clientname
-    let clientDomains = payload.body.domain.replace(/ /g, '').split(';')
-    let clientCallbacks = payload.body.callback.replace(/ /g, '').split(';')
-    let defaultURL = payload.body.defaulturl.replace(/ /g, '')
     params.defaultURL = urlutils.prefixHttp(defaultURL)
-
     //Make sure all urls have http in them
     params.clientDomains.forEach(function (url, i, arr) {
         arr[i] = urlutils.prefixHttp(url)

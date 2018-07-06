@@ -18,6 +18,7 @@ router.get('/',acl.ensureAdmin, async (req,res,next) => {
     } catch(err) {
         Raven.captureException(err)
         req.flash('error','Something went wrong, could not fetch clients')
+        res.redirect('user/me')
     }
 })
 

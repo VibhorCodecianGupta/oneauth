@@ -17,7 +17,9 @@ router.get('/',
 
       } catch(err) {
           Raven.captureException(err)
-          req.flash('error','Something went wrong, could not fetch apps')      }
+          req.flash('error','Something went wrong, could not fetch apps')
+          res.redirect('user/me')
+        }
     }
 )
 
@@ -37,6 +39,7 @@ router.get('/:clientId/delete',cel.ensureLoggedIn('/login'),
       } catch(err) {
         Raven.captureException(err)
         req.flash('error', 'Something went wrong, could not delete app')
+        res.redirect('/apps/')
       }
     }
 )

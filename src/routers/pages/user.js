@@ -36,8 +36,8 @@ router.get('/me',
         }
         res.render('user/me', {user: user})
 
-      } catch(err) {
-          Raven.captureException(err)
+      } catch(error) {
+          Raven.captureException(error)
           res.status(500).json({error: error})
       }
   })

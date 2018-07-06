@@ -13,7 +13,6 @@ const { getUserById, getUserOfTrustedClient } = require('../../controllers/user'
 const { destroyAuthToken } = require('../../controllers/oauth')
 const { getAllAddresses } = require('../../controllers/demographics')
 
-
 router.get('/me',
     // Frontend clients can use this API via session (using the '.codingblocks.com' cookie)
     passport.authenticate(['bearer', 'session']),
@@ -178,7 +177,6 @@ router.get('/:id/address',
                 return res.status(403).json({error: 'Unauthorized'})
             }
         }
-
         try {
             const addresses = await getAllAddresses(req.params.id, includes)
             return res.json(addresses)

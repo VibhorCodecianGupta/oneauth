@@ -18,10 +18,6 @@ function getUserOfTrustedClient(id, trustedClient) {
     })
 }
 
-function updateUserLocal(id, pass) {
-  return models.UserLocal.update({password: pass}, {where: {userId: id}})
-}
-
 function updateUser(params, id, bool) {
   return models.User.update(params,
         {
@@ -30,6 +26,17 @@ function updateUser(params, id, bool) {
         })
 }
 
+function createUserLocal(params, pass, includes) {
+  return models.UserLocal.create({user: params, password: pass},{include: includes})
+}
+
+function updateUserLocal(id, pass) {
+  return models.UserLocal.update({password: pass}, {where: {userId: id}})
+}
+
+
+
 module.exports = {
-  getUserById, getUserOfTrustedClient, updateUserLocal, updateUser, getUserByParams
+  getUserById, getUserOfTrustedClient, updateUserLocal, updateUser, getUserByParams,
+  createUserLocal
 }

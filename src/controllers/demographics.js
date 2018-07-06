@@ -32,24 +32,7 @@ function getAllAddresses(id, includes) {
     })
 }
 
-function createAddress(payload, demographics) {
-
-    const params = {
-      label: payload.body.label,
-      first_name: payload.body.first_name,
-      last_name: payload.body.last_name,
-      mobile_number: payload.body.number,
-      email: payload.body.email,
-      pincode: payload.body.pincode,
-      street_address: payload.body.street_address,
-      landmark: payload.body.landmark,
-      city: payload.body.city,
-      stateId: payload.body.stateId,
-      countryId: payload.body.countryId,
-      demographicId: demographics.id,
-      // if no addresses, then first one added is primary
-      primary: !demographics.get().addresses
-    }
+function createAddress(params) {
     return models.Address.create(params)
 }
 
@@ -57,23 +40,7 @@ function updateAddressbyDemoId(id, params) {
     return models.Address.update(params, {where: {demographicId: id}})
 }
 
-function updateAddressbyId(payload, id) {
-
-    const params = {
-      label: payload.body.label,
-      first_name: payload.body.first_name,
-      last_name: payload.body.last_name,
-      mobile_number: payload.body.number,
-      email: payload.body.email,
-      pincode: payload.body.pincode,
-      street_address: payload.body.street_address,
-      landmark: payload.body.landmark,
-      city: payload.body.city,
-      stateId: payload.body.stateId,
-      countryId: payload.body.countryId,
-      primary: payload.body.primary === 'on'
-    }
-
+function updateAddressbyId(id, params) {
     return models.Address.update(params, {where: {id: id}})
 }
 

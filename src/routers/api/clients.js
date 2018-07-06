@@ -14,9 +14,16 @@ router.post('/add', async (req, res) => {
   if (!req.user) {
          return res.status(403).send("Only logged in users can make clients")
   }
+  const query = {
+      clientName: req.body.clientname,
+      clientDomains: req.body.domain.replace(/ /g, '').split(';'),
+      clientCallbacks: req.body.callback.replace(/ /g, '').split(';'),
+      defaultURL: req.body.defaulturl.replace(/ /g, ''),
+      userId: req.user.id
+  }
 
     try {
-        const client = await addClient(req)
+        const client = await addClient(query)
         res.redirect('/clients/' + client.id)
 
     } catch(err) {
@@ -29,9 +36,21 @@ router.post('/add', async (req, res) => {
 
 router.post('/edit/:id', cel.ensureLoggedIn('/login'), async (req, res) => {
 
+    const query = {
+      clientId: parseInt(req.params.id),
+      clientName: req.body.clientname,
+      clientDomains: req.body.domain.replace(/ /g, '').split(';'),
+      defaultURL: req.body.defaulturl.replace(/ /g, ''),
+      clientCallbacks: req.body.callback.replace(/ /g, '').split(';'),
+      trustedClient: false
+    }
+    if(req.user.role === 'admin'){
+        query.trustedClient = req.body.trustedClient
+    }
+
       try {
-          const client = await editClient(req)
-          res.redirect('/clients/' + client.id)
+          const client = await editClient(query)
+          res.redirect('/clients/' + query.clientId)
 
       } catch(err) {
           Raven.captureException(err)

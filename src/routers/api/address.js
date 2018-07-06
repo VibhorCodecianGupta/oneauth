@@ -16,7 +16,24 @@ router.post('/', cel.ensureLoggedIn('/login'), async (req, res) => {
         }
         try {
             const [demographic, created] = await findOrCreateDemographics(req.user.id)
-            const address = await createAddress(req, demographic)
+
+            const query = {
+                label: req.body.label,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name,
+                mobile_number: req.body.number,
+                email: req.body.email,
+                pincode: req.body.pincode,
+                street_address: req.body.street_address,
+                landmark: req.body.landmark,
+                city: req.body.city,
+                stateId: req.body.stateId,
+                countryId: req.body.countryId,
+                demographicId: demographics.id,
+                // if no addresses, then first one added is primary
+                primary: !demographics.get().addresses
+            }
+            const address = await createAddress(query)
 
             if (req.body.returnTo) {
                 res.redirect(req.body.returnTo)
@@ -49,7 +66,22 @@ router.post('/:id', cel.ensureLoggedIn('/login'), async (req, res) => {
               await updateAddressbyDemoId(demoId, {primary:false})
           }
 
-          await updateAddressbyId(req, addrId)
+          const query = {
+            label: req.body.label,
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            mobile_number: req.body.number,
+            email: req.body.email,
+            pincode: req.body.pincode,
+            street_address: req.body.street_address,
+            landmark: req.body.landmark,
+            city: req.body.city,
+            stateId: req.body.stateId,
+            countryId: req.body.countryId,
+            primary: req.body.primary === 'on'
+          }
+
+          await updateAddressbyId(addrId, query)
           res.redirect(`/address/${addrId}`)
       })
 

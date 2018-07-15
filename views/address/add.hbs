@@ -7,6 +7,14 @@
         <input type="hidden" name="returnTo" id="redirect-input" />
 
         <div class="attributes">
+
+          <div class="row justify-content-between">
+            <div class="row no-gutters align-items-center justify-content-between detail-row">
+              <div class="label-input col-md-4 col-sm-3">Label</div>
+              <input class="input-text col-md-8 col-sm-8" type="text" placeholder="Home, Office etc." name="label" />
+            </div>
+          </div>
+
           <div class="row justify-content-between">
             <div class="row no-gutters align-items-center justify-content-between detail-row">
               <div class="label-input col-md-4 col-sm-3">First Name</div>
@@ -74,10 +82,17 @@
                 {{/each}}
               </select>
             </div>
+          </div>
 
+          <div class="row justify-content-between">
             <div class="row no-gutters align-items-center justify-content-between detail-row">
-              <div class="label-input col-md-4 col-sm-3">Label</div>
-              <input class="input-text col-md-8 col-sm-8" type="text" placeholder="Label" name="label" required />
+              <div class="label-input col-md-4 col-sm-3">WhatsApp</div>
+              <input class="input-text col-md-8 col-sm-8" type="text" pattern="[0-9]{10}" maxlength="10" placeholder="WhatsApp Number" name="wa_number" />
+            </div>
+
+            <div class="row no-gutters align-items-center detail-row">
+              <input type="checkbox" id="same" class="input-checkbox">&nbsp;&nbsp;
+              <label for="same">Same as mobile number</label>
             </div>
           </div>
 
@@ -101,5 +116,15 @@
         let params = (new URL(document.location)).searchParams;
         let url = params.get('returnTo')
         $('#redirect-input').val(url)
+    })
+
+    $('#same').change(function () {
+      if ($('#same').is(':checked')) {
+        $('input[name=wa_number]').val($('input[name=number]').val());
+        $("input[name=wa_number]").prop('disabled',true)
+        return;
+      }
+      $('input[name=wa_number]').val('')
+      $('input[name=wa_number]').prop('disabled',false)
     })
 </script>

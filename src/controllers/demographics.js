@@ -12,7 +12,7 @@ function getDemographics(id) {
 }
 
 function updateDemographic(demographic, id) {
-    return models.Demographic.upsert(demographic, {where: {userId: req.user.id}})
+    return models.Demographic.upsert(demographic, {where: {userId: id}})
 }
 
 function getAddress(addrId, userId) {

@@ -7,7 +7,7 @@ const urlutils = require('../../utils/urlutils')
 const {hasNull} = require('../../utils/nullCheck')
 const { findOrCreateDemographics, getDemographics, createAddress, updateAddressbyDemoId, updateAddressbyId } = require('../../controllers/demographics')
 
-router.post('/', cel.ensureLoggedIn('/login'), function (req, res) {
+router.post('/', cel.ensureLoggedIn('/login'), async (req, res) => {
     if (hasNull(req.body, ['first_name', 'last_name', 'number', 'email', 'pincode', 'street_address', 'landmark', 'city', 'stateId', 'countryId'])) {
 
         res.send(400)

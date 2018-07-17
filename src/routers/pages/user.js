@@ -10,7 +10,7 @@ const models = require('../../db/models').models
 const acl = require('../../middlewares/acl')
 const multer = require('../../utils/multer')
 const { getUserById, updateUserLocal, updateUser } = require('../../controllers/user')
-const { updateDemographic, getColleges, getBranches } = require('../../controllers/demographics')
+const { getDemographics, updateDemographic, getColleges, getBranches } = require('../../controllers/demographics')
 const { getAllClientsForUser } = require('../../controllers/client')
 
 router.get('/me',
@@ -137,13 +137,16 @@ router.post('/me/edit',
                 demographic.collegeId = +req.body.collegeId
             }
 
-            let userDemographic = await models.Demographic.findOne({
-                where:{
-                    userId:demographic.userId
-                }
-            })
-            await models.Demographic.upsert({id:userDemographic.id,collegeId:demographic.collegeId,branchId:demographic.branchId})
+            const userDemographic = await getDemographics(demographic.userId)
 
+            const query = {
+                id: userDemographic.id,
+                collegeId: demographic.collegeId,
+                branchId: demographic.branchId
+            }
+
+            await updateDemographic(query)
+            //await models.Demographic.upsert({id:userDemographic.id,collegeId:demographic.collegeId,branchId:demographic.branchId})
             if (req.body.password) {
                 const passHash = await passutils.pass2hash(req.body.password)
                 await updateUserLocal(req.user.id, passHash)

@@ -15,7 +15,7 @@ function getAllClientsForUser(userId) {
 }
 
 function addClient(params) {
-    params.defaultURL = urlutils.prefixHttp(defaultURL)
+    params.defaultURL = urlutils.prefixHttp(params.defaultURL)
     //Make sure all urls have http in them
     params.clientDomains.forEach(function (url, i, arr) {
         arr[i] = urlutils.prefixHttp(url)
@@ -39,7 +39,7 @@ function addClient(params) {
 
 
 function editClient(params) {
-    params.defaultURL = urlutils.prefixHttp(defaultURL)
+    params.defaultURL = urlutils.prefixHttp(params.defaultURL)
     //Make sure all urls have http in them
     params.clientDomains.forEach(function (url, i, arr) {
         arr[i] = urlutils.prefixHttp(url)

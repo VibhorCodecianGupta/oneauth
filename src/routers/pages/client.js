@@ -53,7 +53,7 @@ router.get('/:id/edit',
     cel.ensureLoggedIn('/login'),
     async (req, res, next) => {
       try {
-          const client = await getClientById(req.param.id)
+          const client = await getClientById(req.params.id)
           if (!client) {
               return res.send("Invalid Client Id")
           }
@@ -68,7 +68,7 @@ router.get('/:id/edit',
       } catch(err) {
           Raven.captureException(err)
           req.flash('error','Something went wrong')
-          res.redirect('client/id')
+          res.redirect('client/all')
       }
     }
 )

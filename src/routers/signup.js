@@ -3,6 +3,7 @@
  *
  * This is the /signup path
  */
+const Raven = require('raven') 
 const router = require('express').Router()
 const models = require('../db/models').models
 const passutils = require('../utils/password')

@@ -10,7 +10,7 @@ const models = require('../../db/models').models
 const acl = require('../../middlewares/acl')
 const multer = require('../../utils/multer')
 
-const { 
+const {
     findUserById,
     updateUser
 } = require('../../controllers/user');
@@ -66,7 +66,7 @@ router.get('/me/edit',
                     }
                 ]),
                 findAllColleges(),
-                findAllBranches() 
+                findAllBranches()
             ])
             if (!user) {
                 res.redirect('/login')
@@ -116,9 +116,13 @@ router.post('/me/edit',
         try {
             const user = await findUserById(req.user.id,[models.Demographic])
             const demographic = user.demographic || {};
-            
+
             user.firstname = req.body.firstname
             user.lastname = req.body.lastname
+
+            if (req.body.gender) {
+              user.gender = req.body.gender
+            }
             if (!user.verifiedemail && req.body.email !== user.email) {
                 user.email = req.body.email
             }
@@ -179,7 +183,7 @@ router.get('/:id',
                 models.UserFacebook,
                 models.UserLms,
                 models.UserTwitter
-            ]) 
+            ])
             if (!user) {
                 return res.status(404).send({error: "Not found"})
             }
@@ -195,7 +199,7 @@ router.get('/:id/edit',
     acl.ensureRole('admin'),
     async function (req, res, next) {
         try {
-            const user = await findUserById(req.params.id) 
+            const user = await findUserById(req.params.id)
             if (!user) {
                 return res.status(404).send({error: "Not found"})
             }
@@ -214,9 +218,10 @@ router.post('/:id/edit',
             const user = await updateUser(req.params.id,{
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
+                gender: req.body.gender,
                 email: req.body.email,
                 role: req.body.role !== 'unchanged' ? req.body.role : undefined
-            }) 
+            })
             return res.redirect('../' + req.params.id);
         } catch (error) {
             throw erorr

@@ -32,6 +32,17 @@
                 </div>
 
                 <div class="row no-gutters align-items-center justify-content-between detail-row">
+                    <div class="label-input col-2">Gender</div>
+                    <select name="gender" class="input-text col-9" id="gender">
+                      <option value="" selected disabled hidden>I identify my gender as...</option>
+                      <option class="dropdown-li" value="Male">Male</option>
+                      <option class="dropdown-li" value="Female">Female</option>
+                      <option class="dropdown-li" vlue="Other">Other</option>
+                      <option class="dropdown-li" value="Not Disclosed">Prefer not to disclose</option>
+                    </select>
+                </div>
+
+                <div class="row no-gutters align-items-center justify-content-between detail-row">
                         <div class="label-input col-2">Email ID</div>
                         <input type="text" id="email" name="email" class="input-text col-9" value="{{user.email}}" />
                 </div>
@@ -56,7 +67,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </form>
     </div>
 </div>

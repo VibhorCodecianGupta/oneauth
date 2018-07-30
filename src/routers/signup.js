@@ -20,6 +20,10 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), function (req, res) {
         req.flash('error', 'Firstname and/or Lastname cannot be empty')
         return res.redirect('/signup')
     }
+    if (req.body.gender.trim() === '') {
+        req.flash('error', 'Gender cannot be empty')
+        return res.redirect('/signup')
+    }
     if (req.body.email.trim() === '') {
         req.flash('error', 'Email cannot be empty')
         return res.redirect('/signup')
@@ -32,7 +36,7 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), function (req, res) {
     models.User.findOne({where: {username: req.body.username}})
         .then((user) => {
             if (user) {
-                req.flash('error', 'Username already exist\'s. Please try again.')
+                req.flash('error', 'Username already exists. Please try again.')
                 return res.redirect('/signup')
             }
             passutils.pass2hash(req.body.password)
@@ -42,6 +46,7 @@ router.post('/', makeGaEvent('submit', 'form', 'signup'), function (req, res) {
                             username: req.body.username,
                             firstname: req.body.firstname,
                             lastname: req.body.lastname,
+                            gender: req.body.gender,
                             email: req.body.email,
                             demographic: {
                                 branchId: req.body.branchId,

@@ -36,6 +36,12 @@
                         <span class="faded">{{user.lastname}}</span>
                     </div>
                 </div>
+                <div id="profile-row-gender" class="flex-row">
+                    <div>Gender</div>
+                    <div>
+                        <span class="faded">{{user.gender}}</span>
+                    </div>
+                </div>
                 {{#unless user.verifiedemail}}
                     <div id="profile-row-email" class="flex-row">
                         <div>Email Address</div>
@@ -123,7 +129,7 @@
                         </div>
                     </div>
                 {{/if}}
-                {{#if user.usergithub}}    
+                {{#if user.usergithub}}
                     <div id="profile-row-github" class="flex-row">
                         <div>Github Connected</div>
                         <div>
@@ -138,7 +144,7 @@
                         </div>
                     </div>
                 {{/if}}
-                {{#ifCond user.userfacebook user.usergithub user.usergoogle user.usertwitter}}   
+                {{#ifCond user.userfacebook user.usergithub user.usergoogle user.usertwitter}}
                     <div class="flex-row">
                         You may also connect to:
                     </div>

@@ -55,14 +55,14 @@
                     </div>
                 </div>
 
-                {{#ifeq val=user.gender expected="Prefer not to disclose"}}
+                {{#ifneq val=user.gender expected="Prefer not to disclose"}}
                   <div id="profile-row-id" class="flex-row">
                       <div>Gender</div>
                       <div>
                           <span class="faded">{{user.gender}}</span>
                       </div>
                   </div>
-                {{/ifeq}}
+                {{/ifneq}}
 
                 <div id="profile-row-id" class="flex-row">
                     <div>Email ID</div>

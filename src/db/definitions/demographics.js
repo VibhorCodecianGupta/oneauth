@@ -14,6 +14,17 @@ module.exports = {
         city: {type: Sequelize.DataTypes.STRING, allowNull: false},
         primary: {type: Sequelize.DataTypes.BOOLEAN, allowNull: false}
     },
+    
+    prefix: {
+        dial_code: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        code: {
+            type: Sequelize.DataTypes.STRING(2),
+            primaryKey: true,
+        }
+    }
 
     state: {
         name: {

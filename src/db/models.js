@@ -135,6 +135,7 @@ const Address = db.define('address', definitions.demographics.address, {
         }
     ]
 })
+const Prefix = db.define('prefix', definitions.demographics.prefix)
 const State = db.define('state', definitions.demographics.state)
 const Country = db.define('country', definitions.demographics.country)
 const College = db.define('college', definitions.demographics.college)
@@ -149,6 +150,9 @@ State.hasMany(Address)
 
 Address.belongsTo(Country)
 Country.hasMany(Address)
+
+Prefix.belongsTo(Country)
+Country.hasOne(Prefix)
 
 
 // "Demographic" is the demographic of 'one' user
@@ -180,7 +184,7 @@ module.exports = {
     models: {
         User, UserLocal, UserFacebook, UserTwitter, UserGithub, UserGoogle, UserLms,
         Client, GrantCode, AuthToken, Resetpassword, Verifyemail,
-        Demographic, Address, College, Company, Branch, State, Country
+        Demographic, Address, College, Company, Branch, State, Country, Prefix
     },
     db
 }

@@ -8,8 +8,7 @@ async function runSeed() {
     try {
         //await db.sync()
         await Country.bulkCreate([
-          [
-            { name: "Israel", dial_code: "+972", id: "IL" },
+          
             { name: "Afghanistan", dial_code: "+93", id: "AF" },
             { name: "Albania", dial_code: "+355", id: "AL" },
             { name: "Algeria", dial_code: "+213", id: "DZ" },
@@ -251,7 +250,7 @@ async function runSeed() {
             { name: "Viet Nam", dial_code: "+84", id: "VN" },
             { name: "Virgin Islands, British", dial_code: "+1284", id: "VG" },
             { name: "Virgin Islands, U.S.", dial_code: "+1340", id: "VI" }
-          ]
+          
         ]);
     } catch (err) {
         console.error(err)

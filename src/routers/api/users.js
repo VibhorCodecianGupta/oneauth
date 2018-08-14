@@ -14,7 +14,7 @@ const { deleteAuthToken } = require('../../controllers/oauth');
 const  { findAllAddresses } = require('../../controllers/demographics');
 
 router.get('/',
-  passport.authenticate('bearer', {session: false}),
+  passport.authenticate(['bearer', 'session']),
   async function (req, res) {
     
      let filter = queryFilter(req.query)
@@ -22,13 +22,13 @@ router.get('/',
     
     try {
       let users = await findAllUsersWithFilter(trustedClient, filter);
-      if (!user) {
-        throw new Error("User not found")
+      if (!users) {
+        throw new Error("Users not found")
       }
       
-      res.send(users)
+        res.send(users)
     } catch (error) {
-      res.send('Unknown user or unauthorized request')
+        res.send('Unknown user or unauthorized request')
     }
   }
 )

@@ -46,12 +46,9 @@ function queryFilter(query) {
   }
   if (query.contact) {
     let contact = query.contact
-    if(/^\d+$/.test(contact)) {
-      filter.contact = {
+      filter.mobile_number = {
         like: `%${contact}`
       }
-    } else {
-     }
   }
   if (query.verified) {
     let verify = (query.verified == 'true')

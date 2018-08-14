@@ -22,6 +22,11 @@ router.post('/add', async function (req, res) {
         clientCallbacks : req.body.callback.replace(/ /g, '').split(';'),
         defaultURL : req.body.defaulturl.replace(/ /g, '')
     }
+    const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
+    
+    if (req.body.webhookURL && regex.test(req.body.webhookURL)){
+        options.webhookURL = req.body.webhookURL
+    }
     try {
         const clientid = await createClient(options, req.user.id)
         res.redirect('/clients/' + clientid.id)
@@ -44,6 +49,13 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             if(req.user.role === 'admin'){
                 options.trustedClient = req.body.trustedClient
             }
+            
+            const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
+            
+            if (req.body.webhookURL && regex.test(req.body.webhookURL)){
+                options.webhookURL = req.body.webhookURL
+            }
+            
             await updateClient(options, clientId)
             res.redirect('/clients/' + clientId)
         } catch (error) {

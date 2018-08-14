@@ -9,9 +9,30 @@ const passport = require('../../passport/passporthandler')
 const models = require('../../db/models').models
 
 const Raven = require('raven');
-const { findUserById , findUserForTrustedClient} = require('../../controllers/user');
+const { findUserById , findUserForTrustedClient, findAllUsersForTrustedClient } = require('../../controllers/user');
 const { deleteAuthToken } = require('../../controllers/oauth');
 const  { findAllAddresses } = require('../../controllers/demographics');
+
+router.get('/',
+  passport.authenticate('bearer', {session: false}),
+  async function (req, res) {
+    
+     let whereObj = generateWhere(req.query)
+     let trustedClient = req.client && req.client.trusted
+    
+    try {
+      let users = await findAllUsersForTrustedClient(trustedClient, whereObj);
+      if (!user) {
+        throw new Error("User not found")
+      }
+      
+      res.send(users)
+    } catch (error) {
+      res.send('Unknown user or unauthorized request')
+    }
+  }
+)
+
 
 router.get('/me',
     // Frontend clients can use this API via session (using the '.codingblocks.com' cookie)

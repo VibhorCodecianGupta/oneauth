@@ -14,15 +14,17 @@ function updateUser(userid, newValues) {
   });
 }
 
-function findUserForTrustedClient(trustedClient, userId) {
-  return User.findOne({
-    attributes: trustedClient ? undefined : ["id", "username", "photo"],
-    where: { id: userId }
+function findAllUsersForTrustedClient(trustedClient, where) {
+  return User.findAll({
+    attributes: trustedClient ? undefined : ["id", "username", "email", "firstname", "lastname", "mobile_number"],
+    where: where || {},
   });
 }
+
 
 module.exports = {
   findUserById,
   updateUser,
-  findUserForTrustedClient
+  findUserForTrustedClient,
+  findAllUsersForTrustedClient
 };

@@ -36,10 +36,11 @@ module.exports = new LinkedinStrategy({
                   throw new Error('Your Linkedin account is already linked with codingblocks account Id: ' + lkaccount.dataValues.userId)
               } else {
                   const updated = await models.UserLinkedin.upsert({
-                    id: profileJson.id,
+                      id: profileJson.id,
                       token: token,
                       tokenSecret: tokenSecret,
                       username: profileJson.formattedName,
+                      email: profileJson.email,
                       profile: profileJson.publicProfileUrl,
                       userId: oldUser.id
                   })

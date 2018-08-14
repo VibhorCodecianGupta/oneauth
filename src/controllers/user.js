@@ -1,5 +1,9 @@
 const { User } = require("../db/models").models;
 
+function findAllUsers() {
+  return User.findAll({});
+}
+
 function findUserById(id, includes) {
   return User.findOne({
     where: { id },
@@ -22,6 +26,7 @@ function findUserForTrustedClient(trustedClient, userId) {
 }
 
 module.exports = {
+  findAllUsers,
   findUserById,
   updateUser,
   findUserForTrustedClient

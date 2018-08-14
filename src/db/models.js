@@ -94,7 +94,7 @@ const Client = db.define('client', {
     secret: Sequelize.DataTypes.STRING,
     domain: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
     callbackURL: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
-    webhookURL: {type: Sequelize.DataTypes.STRING, default: ''},
+    webhookURL: {type: Sequelize.DataTypes.STRING, default: NULL},
     trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false},
     defaultURL: {type: Sequelize.DataTypes.STRING, allowNull:false, default: 'https://codingblocks.com/'},
 })

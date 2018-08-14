@@ -5,7 +5,7 @@
  */
 const router = require('express').Router()
 const cel = require('connect-ensure-login')
-
+const { isURL } = require('../../utils/urlutils')
 const {
     createClient,
     updateClient
@@ -22,9 +22,8 @@ router.post('/add', async function (req, res) {
         clientCallbacks : req.body.callback.replace(/ /g, '').split(';'),
         defaultURL : req.body.defaulturl.replace(/ /g, '')
     }
-    const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
     
-    if (req.body.webhookURL && regex.test(req.body.webhookURL)){
+    if (req.body.webhookURL && isURL(req.body.webhookURL)){
         options.webhookURL = req.body.webhookURL
     }
     try {
@@ -49,10 +48,8 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             if(req.user.role === 'admin'){
                 options.trustedClient = req.body.trustedClient
             }
-            
-            const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/
-            
-            if (req.body.webhookURL && regex.test(req.body.webhookURL)){
+
+            if (req.body.webhookURL && isURL(req.body.webhookURL)){
                 options.webhookURL = req.body.webhookURL
             }
             

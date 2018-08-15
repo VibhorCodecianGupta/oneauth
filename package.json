@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 12000",
-    "cover": "nyc npm test",
-    "precodecov": "npm run cover",
-    "codecov": "codecov",
+    "test": "nyc mocha --timeout 10000",
+    "report": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "start": "node src/server.js",
     "start:dev": "cross-env ONEAUTH_DEV=localhost npm start"
   },
@@ -81,5 +79,16 @@
     "cross-env": "^5.1.5",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2"
+  },
+  "nyc": {
+    "extensions": [
+      ".js",
+      ".hbs"
+    ],
+    "reporter": [
+      "text",
+      "lcovonly"
+    ],
+    "sourceMap": true
   }
 }

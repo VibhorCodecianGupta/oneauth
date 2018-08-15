@@ -1,1 +1,2 @@
 ALTER TABLE addresses ADD COLUMN dial_code VARCHAR(25);
+ALTER TABLE countries ADD COLUMN dial_code VARCHAR(25) NOT NULL;

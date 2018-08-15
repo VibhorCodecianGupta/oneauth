@@ -26,6 +26,43 @@
                     <div class="label-input col-md-4 col-sm-3">Default Url</div>
                     <input type="text" class="input-text col-8" placeholder="Default URL" name="defaulturl" value="{{client.clientdefaultURL}}"/>
                 </div>
+                <div class="row no-gutters align-items-center justify-content-between detail-row">
+                    <div class="label-input col-md-4 col-sm-3">Webhook Url</div>
+                    <input type="url" class="input-text col-8" placeholder="Webhook URL" name="webhookURL" value="{{client.webhookURL}}"/>
+                </div>
+                
+                {{#if client.trusted}}
+                  {{#if client.webhookURL}}
+                  <div class="row no-gutters justify-content-between mt-5 mb-5">
+                    <table border="1px" border-spacing="2px" cellpadding="5px" cellspacing="5px">
+                      <tr>
+                        <th>Users</th>
+                        <th>Demographics</th>
+                        <th>Addresses</th>
+                        <th>Clients</th>
+                      </tr>
+                      <tr>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="userCreate"/>&nbsp;Create</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="demoCreate"/>&nbsp;Create</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="addrCreate"/>&nbsp;Create</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="clientCreate"/>&nbsp;Create</td>
+                      </tr>
+                      <tr>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="userUpdate"/>&nbsp;Update</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="demoUpdate"/>&nbsp;Update</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="addrUpdate"/>&nbsp;Update</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="clientUpdate"/>&nbsp;Update</td>
+                      </tr>
+                      <tr>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="userDelete"/>&nbsp;Delete</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="demoDelete"/>&nbsp;Delete</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="addrDelete"/>&nbsp;Delete</td>
+                        <td><input type="checkbox" class="input-checkbox col-7" name="clientDelete"/>&nbsp;Delete</td>
+                      </tr>
+                    </table>
+                  </div>
+                  {{/if}}
+                {{/if}}
 
                 {{#ifeq val=userRole expected="admin"}}
                     <div class="row no-gutters align-items-center justify-content-between detail-row">

@@ -5,7 +5,7 @@
  */
 const router = require('express').Router()
 const cel = require('connect-ensure-login')
-
+const { isURL } = require('../../utils/urlutils')
 const {
     createClient,
     updateClient
@@ -23,6 +23,15 @@ router.post('/add', async function (req, res) {
         clientCallbacks : req.body.callback.replace(/ /g, '').split(';'),
         defaultURL : req.body.defaulturl.replace(/ /g, '')
     }
+    
+    if (!isURL(req.body.webhookURL)) {
+        res.status(500).send("Not a valid URL!")
+    }   
+    
+    if (req.body.webhookURL && isURL(req.body.webhookURL)){
+        options.webhookURL = req.body.webhookURL
+    }
+      
     try {
         const clientid = await createClient(options, req.user.id)
         res.redirect('/clients/' + clientid.id)
@@ -45,6 +54,15 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             if(req.user.role === 'admin'){
                 options.trustedClient = req.body.trustedClient
             }
+            
+            if (!isURL(req.body.webhookURL)) {
+                res.status(500).send("Not a valid URL!")
+            }   
+            
+            if (req.body.webhookURL && isURL(req.body.webhookURL)){
+                options.webhookURL = req.body.webhookURL
+            }
+            
             await updateClient(options, clientId)
             res.redirect('/clients/' + clientId)
         } catch (error) {

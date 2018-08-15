@@ -1,0 +1,1 @@
+ALTER TABLE addresses ADD COLUMN dial_code VARCHAR(25);

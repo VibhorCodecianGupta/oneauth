@@ -23,6 +23,10 @@ router.post('/add', async function (req, res) {
         defaultURL : req.body.defaulturl.replace(/ /g, '')
     }
     
+    if (!isURL(req.body.webhookURL)) {
+        res.status(500).send("Not a valid URL!")
+    }
+    
     if (req.body.webhookURL && isURL(req.body.webhookURL)){
         options.webhookURL = req.body.webhookURL
     }
@@ -48,7 +52,11 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             if(req.user.role === 'admin'){
                 options.trustedClient = req.body.trustedClient
             }
-
+            
+            if (!isURL(req.body.webhookURL)) {
+                res.status(500).send("Not a valid URL!")
+            }
+            
             if (req.body.webhookURL && isURL(req.body.webhookURL)){
                 options.webhookURL = req.body.webhookURL
             }

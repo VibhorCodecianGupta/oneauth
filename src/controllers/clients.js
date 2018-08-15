@@ -24,6 +24,7 @@ function createClient(options, userId) {
     name: options.clientName,
     domain: options.clientDomains,
     defaultURL: options.defaultURL,
+    webhookURL: options.webhookURL || null,
     callbackURL: options.clientCallbacks,
     userId: userId
   });
@@ -43,6 +44,7 @@ function updateClient(options, clientId) {
       domain: options.clientDomains,
       defaultURL: options.defaultURL,
       callbackURL: options.clientCallbacks,
+      webhookURL: options.webhookURL || null,
       trusted: options.trustedClient
     },
     {

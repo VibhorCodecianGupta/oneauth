@@ -1,1 +1,1 @@
-ALTER TABLE public.userlinkedins ADD COLUMN email VARCHAR(255);
+ALTER TABLE clients ADD COLUMN "webhookURL" VARCHAR(255);

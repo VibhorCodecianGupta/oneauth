@@ -1,10 +1,11 @@
 {
   "name": "oneauth",
-  "version": "0.5.6",
+  "version": "0.6.2",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --timeout 10000 -- tests/**/*.js",
+    "report": "nyc yarn test",
     "start": "node src/server.js",
     "start:dev": "cross-env ONEAUTH_DEV=localhost npm start"
   },
@@ -53,6 +54,7 @@
     "passport-google-oauth20": "^1.0.0",
     "passport-http": "^0.3.0",
     "passport-http-bearer": "^1.0.1",
+    "passport-linkedin-oauth2": "^1.5.0",
     "passport-local": "^1.0.0",
     "passport-oauth2-client-password": "^0.1.2",
     "passport-strategy": "^1.0.0",
@@ -63,7 +65,7 @@
     "raven": "^2.3.0",
     "request": "^2.81.0",
     "request-ip": "^2.0.2",
-    "sequelize": "^4.13.5",
+    "sequelize": "^4.38.0",
     "uid2": "^0.0.3",
     "winston": "^2.4.0",
     "winston-graylog2": "^0.7.0"
@@ -74,6 +76,20 @@
     "yarn": "1"
   },
   "devDependencies": {
-    "cross-env": "^5.1.5"
+    "chai": "^4.1.2",
+    "cross-env": "^5.1.5",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2"
+  },
+  "nyc": {
+    "extensions": [
+      ".js",
+      ".hbs"
+    ],
+    "reporter": [
+      "text",
+      "lcovonly"
+    ],
+    "sourceMap": true
   }
 }

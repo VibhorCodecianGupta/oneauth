@@ -6,7 +6,7 @@
 const Raven = require('raven') 
 const router = require('express').Router()
 const cel = require('connect-ensure-login')
-
+const { isURL } = require('../../utils/urlutils')
 const {
     createClient,
     updateClient
@@ -22,6 +22,10 @@ router.post('/add', async function (req, res) {
         clientDomains : req.body.domain.replace(/ /g, '').split(';'),
         clientCallbacks : req.body.callback.replace(/ /g, '').split(';'),
         defaultURL : req.body.defaulturl.replace(/ /g, '')
+    }
+
+    if (req.body.webhookURL && isURL(req.body.webhookURL)) {
+      options.webhookURL = req.body.webhookURL
     }
     try {
         const clientid = await createClient(options, req.user.id)
@@ -47,6 +51,9 @@ router.post('/edit/:id', cel.ensureLoggedIn('/login'),
             if(req.user.role === 'admin'){
                 options.trustedClient = req.body.trustedClient
             }
+              if (req.body.webhookurl && isURL(req.body.webhookurl)){
+                options.webhookURL = req.body.webhookurl
+              }
             await updateClient(options, clientId)
             res.redirect('/clients/' + clientId)
         } catch (err) {

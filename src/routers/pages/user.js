@@ -32,6 +32,7 @@ router.get('/me',
                 models.UserFacebook,
                 models.UserLms,
                 models.UserTwitter,
+                models.UserLinkedin,
                 {
                     model: models.Demographic,
                     include: [
@@ -115,12 +116,21 @@ router.post('/me/edit',
             return res.redirect('/')
         }
 
+        if(req.body.mobile_number.trim() === ''){
+            req.flash('error', 'Contact number cannot be empty')
+            return res.redirect('/users/me/edit')
+        }
+
         try {
             const user = await findUserById(req.user.id,[models.Demographic])
             const demographic = user.demographic || {};
 
             user.firstname = req.body.firstname
             user.lastname = req.body.lastname
+            if(req.body.gender){
+                user.gender = req.body.gender
+            }
+            user.mobile_number = req.body.mobile_number
             if (!user.verifiedemail && req.body.email !== user.email) {
                 user.email = req.body.email
             }
@@ -149,7 +159,7 @@ router.post('/me/edit',
                 demographic.collegeId = +req.body.collegeId
             }
 
-            let userDemographic = await findDemographic(demographic.userId)
+            let userDemographic = await findDemographic(req.user.id)
 
             await upsertDemographic(userDemographic.id,demographic.collegeId,demographic.branchId)
 
@@ -220,7 +230,9 @@ router.post('/:id/edit',
             const user = await updateUser(req.params.id,{
                 firstname: req.body.firstname,
                 lastname: req.body.lastname,
+                gender:req.body.gender,
                 email: req.body.email,
+                mobile_number: req.body.mobile_number,
                 role: req.body.role !== 'unchanged' ? req.body.role : undefined
             })
             return res.redirect('../' + req.params.id);

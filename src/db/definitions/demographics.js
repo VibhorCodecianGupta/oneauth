@@ -38,7 +38,7 @@ module.exports = {
             primaryKey: true
         },
         dial_code: {
-            type: Sequelize.DataTypes.STRING,
+            type: Sequelize.DataTypes.STRING(5),
             allowNull: false
         }
     },

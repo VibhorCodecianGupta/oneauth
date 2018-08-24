@@ -8,7 +8,7 @@ const {db, models: {
 (async () => {
     try {
         await Branch.bulkCreate([
-            {"code": "OTHER", "name": "---OTHER / NOT LISTED ---"},
+            {"code": "OTHER", "name": "---OTHER / NOT LISTED"},
             {"code": "BT_CS", "name": "(B.Tech/BE) Computers / IT / Software"},
             {"code": "BT_EL", "name": "(B.Tech/BE) Electrical / Electronics"},
             {"code": "BT_ME", "name": "(B.Tech/BE) Mechanical / Automobile / Aeronautical"},

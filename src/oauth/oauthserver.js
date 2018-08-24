@@ -12,7 +12,9 @@ const {
     createRefreshToken,
     findGrantCode,
     findAuthToken, 
-    findOrCreateAuthToken
+    findRefreshToken,
+    findOrCreateAuthToken,
+    deleteAuthToken
 } = require('../controllers/oauth');
 const {findClientById} = require('../controllers/clients');
 
@@ -64,70 +66,112 @@ server.grant(oauth.grant.token(
 /**
  * Exchange **refresh token** to get access token
  */
-server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope, done){
+ 
+server.exchange(oauth.exchange.refreshToken(async function(client, refreshToken, scope, done){
+  
+    try {
+      
+      const refreshToken = await findRefreshToken(refreshToken, [models.Client])
+      
+      if (!refreshToken) {
+          return done(null, false) // token does not exist
+      }
+      if (client.id !== refreshToken.client.id) {
+          return done(null, false) //Wrong Client ID
+      }
+      
+      const authToken = await findAuthToken(refreshToken.clientId, refreshToken.userId)
+      
+      if (!authToken) {
+          const authToken = await createAuthToken(refreshToken.clientId, refreshToken.userId)
+          return done(null, authToken.expires, authToken.token)
+      }
 
-      models.RefreshToken.findOne({
-        where: {
-          token: refreshToken
-        },
-        include: [models.Client]
-      }).then(function(refreshToken) {
+      var expired = Date.now() > authToken.expires ? true : false
 
-        if (!refreshToken) {
-            return done(null, false) // token does not exist
-        }
-        if (client.id !== refreshToken.client.id) {
-            return done(null, false) //Wrong Client ID
-          }
-
-          models.AuthToken.findOne({
-            where: {
-              clientId: refreshToken.clientId,
-              userId: refreshToken.userId
-            }
-          }).then(function(authToken) {
-
-              if(!authToken) {
-                models.AuthToken.create({
-                  token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
-                  scope: ['*'],
-                  explicit: true,
-                  expires : Date.now() + 86400*1000,
-                  clientId: refreshToken.clientId,
-                  userId: refreshToken.userId
-                }).then(function (authToken) {
-                    return done(null, authToken.expires, authToken.token)
-                })
-              }
-
-              var expired = Date.now() > authToken.expires ? true : false
-
-
-              if(authToken && !expired) {
-                  return done(null, authToken.token, refreshToken.token)
-              }
-
-              if(authToken && expired) {
-
-                (async () => {
-                  await authToken.destroy()
-                })()
-
-                models.AuthToken.create({
-                  token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
-                  expires: Date.now() + 86400*1000,
-                  scope: ['*'],
-                  explicit: true,
-                  clientId: refreshToken.clientId,
-                  userId: refreshToken.userId
-                }).then(function (token) {
-                  return done(null, token.token, refreshToken.token)
-                })
-              }
-          }).catch(err => console.log(err))
-
-      }).catch(err => console.log(err))
+      if (authToken && !expired) {
+          return done(null, authToken.token, refreshToken.token)
+      }
+      if (authToken && expired) {
+          
+          (async (authToken)=> {
+            await deleteAuthToken(authToken)
+          })()
+          
+          const token = await createAuthToken(refreshToken.clientId, refreshToken.userId, true)
+          return done(null, token.token, refreshToken.token)
+      }
+      
+    } catch (error) {
+        return done(error)
+    }
+  
 }))
+ 
+// server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope, done){
+// 
+//       models.RefreshToken.findOne({
+//         where: {
+//           token: refreshToken
+//         },
+//         include: [models.Client]
+//       }).then(function(refreshToken) {
+// 
+//         if (!refreshToken) {
+//             return done(null, false) // token does not exist
+//         }
+//         if (client.id !== refreshToken.client.id) {
+//             return done(null, false) //Wrong Client ID
+//           }
+// 
+//           models.AuthToken.findOne({
+//             where: {
+//               clientId: refreshToken.clientId,
+//               userId: refreshToken.userId
+//             }
+//           }).then(function(authToken) {
+// 
+//               if(!authToken) {
+//                 models.AuthToken.create({
+//                   token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
+//                   scope: ['*'],
+//                   explicit: true,
+//                   expires : Date.now() + 86400*1000,
+//                   clientId: refreshToken.clientId,
+//                   userId: refreshToken.userId
+//                 }).then(function (authToken) {
+//                     return done(null, authToken.expires, authToken.token)
+//                 })
+//               }
+// 
+//               var expired = Date.now() > authToken.expires ? true : false
+// 
+// 
+//               if(authToken && !expired) {
+//                   return done(null, authToken.token, refreshToken.token)
+//               }
+// 
+//               if(authToken && expired) {
+// 
+//                 (async () => {
+//                   await authToken.destroy()
+//                 })()
+// 
+//                 models.AuthToken.create({
+//                   token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
+//                   expires: Date.now() + 86400*1000,
+//                   scope: ['*'],
+//                   explicit: true,
+//                   clientId: refreshToken.clientId,
+//                   userId: refreshToken.userId
+//                 }).then(function (token) {
+//                   return done(null, token.token, refreshToken.token)
+//                 })
+//               }
+//           }).catch(err => console.log(err))
+// 
+//       }).catch(err => console.log(err))
+// }))
 
 /**
  * Exchange **grant code** to get access token
@@ -224,28 +268,6 @@ server.exchange(oauth.exchange.clientCredentials(async (client, scope, done) => 
             // Client is not trusted
             return done(null, false);
         }
-
-<<<<<<< HEAD
-     // Everything validated, return the token
-     const token = generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE)
-     // Pass in a null for user id since there is no user with this grant type
-     return models.AuthToken.create({
-         token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
-         scope: ['*'],
-         explicit: false,
-         expires: Date.now() + 86400*1000,
-         clientId: client.get().id,
-         userId: null // This is a client scoped token, so no related user here
-     }).then((Authtoken) => {
-      return done(null , Authtoken.get().token)
-     })
-       .catch((err) => {
-         return done(err)
-     });
- }).catch((err) => {
-     return done(err)
- })
-=======
         // Everything validated, return the token
         // const token = generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE)
         const authToken = await createAuthToken(client.get().id)
@@ -253,7 +275,6 @@ server.exchange(oauth.exchange.clientCredentials(async (client, scope, done) => 
     } catch (error) {
         debug(error)
     }
->>>>>>> e64a73ac2af0e64b5034fd430c243c8a0f15ec00
 }));
 
 const decisionMiddleware = [

@@ -10,11 +10,12 @@ function createGrantCode(clientId, userId) {
   });
 }
 
-function createAuthToken(clientId, userId = null) {
+function createAuthToken(clientId, userId = null, bool = false) {
   return models.AuthToken.create({
     token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
     scope: ["*"],
-    explicit: false,
+    explicit: bool,
+    expires : Date.now() + 86400*1000,
     clientId,
     userId
   });
@@ -48,6 +49,7 @@ function findOrCreateAuthToken(grantCode) {
       token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
       scope: ["*"],
       explicit: true,
+      expires : Date.now() + 86400*1000,
       clientId: grantCode.clientId,
       userId: grantCode.userId
     }
@@ -70,6 +72,15 @@ function findAuthTokensByUserId(userId) {
   });
 }
 
+function findRefreshToken(token, includes) {
+  return models.RefreshToken.findOne({
+    where: {
+      token: token
+    },
+    include: includes 
+  })
+}
+
 function deleteAuthToken(token) {
   return models.AuthToken.destroy({
     where: {
@@ -81,10 +92,11 @@ function deleteAuthToken(token) {
 module.exports = {
   createGrantCode,
   createAuthToken,
+  createRefreshToken,
   findGrantCode,
   findAuthToken,
   findOrCreateAuthToken,
+  findRefreshToken,
   deleteAuthToken,
-  findAuthTokensByUserId,
-  createRefreshToken
+  findAuthTokensByUserId
 };

@@ -34,6 +34,8 @@ pids
 lib-cov
 coverage
 .nyc_output
+coverage
+*.lcov
 .grunt
 bower_components
 .lock-wscript
@@ -52,3 +54,5 @@ secrets.json
 
 # New Relic
 newrelic_agent.log
+.DS_Store
+public_static/css/motley.css

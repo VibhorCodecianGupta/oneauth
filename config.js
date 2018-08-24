@@ -5,6 +5,7 @@ config = {
   "TWITTER_CALLBACK": "/login/twitter/callback",
   "GITHUB_CALLBACK": "/login/github/callback",
   "GOOGLE_CALLBACK": "/login/google/callback",
+  "LINKEDIN_CALLBACK": "/connect/linkedin/callback",
   "GRANT_TOKEN_SIZE": 32,
   "AUTH_TOKEN_SIZE": 64,
   "REFRESH_TOKEN_SIZE": 64,

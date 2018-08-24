@@ -107,75 +107,11 @@ server.exchange(oauth.exchange.refreshToken(async function(client, refreshToken,
     }
   
 }))
- 
-// server.exchange(oauth.exchange.refreshToken(function(client, refreshToken, scope, done){
-// 
-//       models.RefreshToken.findOne({
-//         where: {
-//           token: refreshToken
-//         },
-//         include: [models.Client]
-//       }).then(function(refreshToken) {
-// 
-//         if (!refreshToken) {
-//             return done(null, false) // token does not exist
-//         }
-//         if (client.id !== refreshToken.client.id) {
-//             return done(null, false) //Wrong Client ID
-//           }
-// 
-//           models.AuthToken.findOne({
-//             where: {
-//               clientId: refreshToken.clientId,
-//               userId: refreshToken.userId
-//             }
-//           }).then(function(authToken) {
-// 
-//               if(!authToken) {
-//                 models.AuthToken.create({
-//                   token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
-//                   scope: ['*'],
-//                   explicit: true,
-//                   expires : Date.now() + 86400*1000,
-//                   clientId: refreshToken.clientId,
-//                   userId: refreshToken.userId
-//                 }).then(function (authToken) {
-//                     return done(null, authToken.expires, authToken.token)
-//                 })
-//               }
-// 
-//               var expired = Date.now() > authToken.expires ? true : false
-// 
-// 
-//               if(authToken && !expired) {
-//                   return done(null, authToken.token, refreshToken.token)
-//               }
-// 
-//               if(authToken && expired) {
-// 
-//                 (async () => {
-//                   await authToken.destroy()
-//                 })()
-// 
-//                 models.AuthToken.create({
-//                   token: generator.genNcharAlphaNum(config.AUTH_TOKEN_SIZE),
-//                   expires: Date.now() + 86400*1000,
-//                   scope: ['*'],
-//                   explicit: true,
-//                   clientId: refreshToken.clientId,
-//                   userId: refreshToken.userId
-//                 }).then(function (token) {
-//                   return done(null, token.token, refreshToken.token)
-//                 })
-//               }
-//           }).catch(err => console.log(err))
-// 
-//       }).catch(err => console.log(err))
-// }))
 
 /**
  * Exchange **grant code** to get access token
  */
+ 
 server.exchange(oauth.exchange.code(
     async function (client, code, redirectURI, done) {
         try {

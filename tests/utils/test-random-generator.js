@@ -5,7 +5,7 @@ describe('random generators', () => {
   it('should create random numbers', () => {
     const random = genNdigitNum(4)
     expect(random).to.be.a('number')
-    expect(random.toString().length).to.equal(4)
+    expect(random.length).to.equal(4)
   })
 
   it('should create random alphanums', () => {

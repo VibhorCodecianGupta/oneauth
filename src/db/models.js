@@ -65,25 +65,25 @@ const UserLinkedin = db.define('userlinkedin',definitions.social.linkedin)
 const UserLms = db.define('userlms', definitions.social.lms)
 
 UserLocal.belongsTo(User)
-User.hasOne(UserLocal)
+User.hasOne(UserLocal, {foreignKey: {unique: true}})
 
 UserFacebook.belongsTo(User)
-User.hasOne(UserFacebook)
+User.hasOne(UserFacebook, {foreignKey: {unique: true}})
 
 UserTwitter.belongsTo(User)
-User.hasOne(UserTwitter)
+User.hasOne(UserTwitter, {foreignKey: {unique: true}})
 
 UserGithub.belongsTo(User)
-User.hasOne(UserGithub)
+User.hasOne(UserGithub, {foreignKey: {unique: true}})
 
 UserGoogle.belongsTo(User)
-User.hasOne(UserGoogle)
+User.hasOne(UserGoogle, {foreignKey: {unique: true}})
 
 UserLinkedin.belongsTo(User)
-User.hasOne(UserLinkedin)
+User.hasOne(UserLinkedin, {foreignKey: {unique: true}})
 
 UserLms.belongsTo(User)
-User.hasOne(UserLms)
+User.hasOne(UserLms, {foreignKey: {unique: true}})
 
 Resetpassword.belongsTo(User)
 Verifyemail.belongsTo(User)
@@ -195,7 +195,7 @@ const EventSubscription = db.define('event_subscription', {
 
 if (!process.env.ONEAUTH_DB_NO_SYNC) {
     db.sync({
-        alter: process.env.ONEAUTH_ALTER_TABLE || false,
+        alter: process.env.ONEAUTH_ALTER_TABLES || false,
         force: process.env.ONEAUTH_DROP_TABLES || (config.DEPLOY_CONFIG === 'heroku'), // Clear DB on each run on heroku
     }).then(() => {
         console.log('Database configured')

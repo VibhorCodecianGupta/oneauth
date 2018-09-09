@@ -1,8 +1,7 @@
 const Sequelize = require('sequelize')
-
 module.exports = {
     local: {
-        password: Sequelize.DataTypes.STRING
+        password: Sequelize.DataTypes.STRING,
     },
 
     facebook: {
@@ -16,21 +15,30 @@ module.exports = {
         id: {type: Sequelize.DataTypes.BIGINT, primaryKey: true},
         token: Sequelize.DataTypes.STRING,
         tokenSecret: {type: Sequelize.DataTypes.STRING, allowNull: true},
-        username: {type: Sequelize.DataTypes.STRING, allowNull: true}
+        username: {type: Sequelize.DataTypes.STRING, allowNull: true},
     },
 
     github: {
         id: {type: Sequelize.DataTypes.BIGINT, primaryKey: true},
         token: Sequelize.DataTypes.STRING,
         tokenSecret: {type: Sequelize.DataTypes.STRING, allowNull: true},
-        username: {type: Sequelize.DataTypes.STRING, allowNull: true}
+        username: {type: Sequelize.DataTypes.STRING, allowNull: true},
     },
 
     google:{
         id: {type: Sequelize.DataTypes.STRING, primaryKey: true},
         token: Sequelize.DataTypes.STRING,
         tokenSecret: {type: Sequelize.DataTypes.STRING, allowNull: true},
-        username: {type: Sequelize.DataTypes.STRING, allowNull: true}
+        username: {type: Sequelize.DataTypes.STRING, allowNull: true},
+    },
+
+    linkedin:{
+        id: {type: Sequelize.DataTypes.STRING, primaryKey: true},
+        username: Sequelize.DataTypes.STRING,
+        email: Sequelize.DataTypes.STRING,
+        profile: Sequelize.DataTypes.STRING,
+        token: Sequelize.DataTypes.TEXT,
+        tokenSecret: {type: Sequelize.DataTypes.TEXT, allowNull: true},
     },
 
     lms: {
@@ -38,7 +46,7 @@ module.exports = {
         roll_number: Sequelize.DataTypes.STRING,
         accessToken: Sequelize.DataTypes.STRING,
         course_identifier: Sequelize.DataTypes.STRING,
-        courses: Sequelize.DataTypes.JSONB
+        courses: Sequelize.DataTypes.JSONB,
     }
 
 }

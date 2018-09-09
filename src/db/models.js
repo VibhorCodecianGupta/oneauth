@@ -32,8 +32,10 @@ const User = db.define('user', {
     username: {type: Sequelize.DataTypes.STRING, unique: true, allowNull: false},
     firstname: Sequelize.DataTypes.STRING,
     lastname: Sequelize.DataTypes.STRING,
+    gender: {type:Sequelize.DataTypes.ENUM('MALE','FEMALE','UNDISCLOSED'),default:'UNDISCLOSED'},
     photo: Sequelize.DataTypes.STRING,
     email: Sequelize.DataTypes.STRING,
+    mobile_number: {type: Sequelize.DataTypes.STRING},
     role: {type: Sequelize.DataTypes.ENUM('admin', 'employee', 'intern'), allowNull: true},
     verifiedemail: {type: Sequelize.DataTypes.STRING, defaultValue: null, unique: true, allowNull: true},
     graduationYear: Sequelize.DataTypes.INTEGER
@@ -60,25 +62,29 @@ const UserFacebook = db.define('userfacebook', definitions.social.facebook)
 const UserTwitter = db.define('usertwitter', definitions.social.twitter)
 const UserGithub = db.define('usergithub', definitions.social.github)
 const UserGoogle = db.define('usergoogle',definitions.social.google)
+const UserLinkedin = db.define('userlinkedin',definitions.social.linkedin)
 const UserLms = db.define('userlms', definitions.social.lms)
 
 UserLocal.belongsTo(User)
-User.hasOne(UserLocal)
+User.hasOne(UserLocal, {foreignKey: {unique: true}})
 
 UserFacebook.belongsTo(User)
-User.hasOne(UserFacebook)
+User.hasOne(UserFacebook, {foreignKey: {unique: true}})
 
 UserTwitter.belongsTo(User)
-User.hasOne(UserTwitter)
+User.hasOne(UserTwitter, {foreignKey: {unique: true}})
 
 UserGithub.belongsTo(User)
-User.hasOne(UserGithub)
+User.hasOne(UserGithub, {foreignKey: {unique: true}})
 
 UserGoogle.belongsTo(User)
-User.hasOne(UserGoogle)
+User.hasOne(UserGoogle, {foreignKey: {unique: true}})
+
+UserLinkedin.belongsTo(User)
+User.hasOne(UserLinkedin, {foreignKey: {unique: true}})
 
 UserLms.belongsTo(User)
-User.hasOne(UserLms)
+User.hasOne(UserLms, {foreignKey: {unique: true}})
 
 Resetpassword.belongsTo(User)
 Verifyemail.belongsTo(User)
@@ -89,6 +95,7 @@ const Client = db.define('client', {
     secret: Sequelize.DataTypes.STRING,
     domain: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
     callbackURL: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.STRING),
+    webhookURL: {type: Sequelize.DataTypes.STRING, default: null},
     trusted: {type: Sequelize.DataTypes.BOOLEAN, default: false},
     defaultURL: {type: Sequelize.DataTypes.STRING, allowNull:false, default: 'https://codingblocks.com/'},
 })
@@ -121,8 +128,8 @@ Client.hasMany(AuthToken)
 
 const Demographic = db.define('demographic', {})
 
-Demographic.belongsTo(User)
-User.hasOne(Demographic)
+Demographic.belongsTo(User)     // Demographic has userId
+User.hasOne(Demographic)        // One user has only one demographic, so userId is UNIQUE
 
 const Address = db.define('address', definitions.demographics.address, {
     indexes: [
@@ -165,10 +172,17 @@ Company.hasMany(Demographic)
 Demographic.belongsTo(Branch)
 Branch.hasMany(Demographic)
 
+const EventSubscription = db.define('event_subscription', {
+  id: {type: Sequelize.DataTypes.BIGINT, primaryKey: true, autoIncrement: true},
+  clientId: {type: Sequelize.DataTypes.BIGINT, references: {model: 'clients', key: 'id'}},
+  model: {type: Sequelize.DataTypes.ENUM('user', 'client', 'address', 'demographic')},
+  type: {type: Sequelize.DataTypes.ENUM('create', 'update', 'delete')}
+})
+
 if (!process.env.ONEAUTH_DB_NO_SYNC) {
     db.sync({
-        alter: process.env.ONEAUTH_ALTER_TABLE || false,
-        force: config.DEPLOY_CONFIG === 'heroku', // Clear DB on each run on heroku
+        alter: process.env.ONEAUTH_ALTER_TABLES || false,
+        force: process.env.ONEAUTH_DROP_TABLES || (config.DEPLOY_CONFIG === 'heroku'), // Clear DB on each run on heroku
     }).then(() => {
         console.log('Database configured')
     }).catch(err => console.error(err))
@@ -177,9 +191,9 @@ if (!process.env.ONEAUTH_DB_NO_SYNC) {
 
 module.exports = {
     models: {
-        User, UserLocal, UserFacebook, UserTwitter, UserGithub,UserGoogle, UserLms,
-        Client, GrantCode, AuthToken, Resetpassword, Verifyemail,
-        Demographic, Address, College, Company, Branch, State, Country
+        User, UserLocal, UserFacebook, UserTwitter, UserGithub, UserGoogle,
+        UserLinkedin, UserLms, Client, GrantCode, AuthToken, Resetpassword, Verifyemail,
+        Demographic, Address, College, Company, Branch, State, Country, EventSubscription
     },
     db
 }

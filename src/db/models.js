@@ -156,7 +156,6 @@ State.hasMany(Address)
 Address.belongsTo(Country)
 Country.hasMany(Address)
 
-
 // "Demographic" is the demographic of 'one' user
 
 Address.belongsTo(Demographic) //address will have demographicId

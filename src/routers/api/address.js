@@ -3,6 +3,7 @@ const {db} = require('../../db/models')
 const cel = require('connect-ensure-login')
 const Raven = require('raven')
 const {hasNull} = require('../../utils/nullCheck')
+const { parseNumberByCountry, validateNumber } = require('../../utils/mobile_validator')
 
 const {
     findOrCreateDemographic,
@@ -32,9 +33,15 @@ router.post('/', cel.ensureLoggedIn('/login'), async function (req, res) {
             return res.redirect('/address/add')
         }
 
+        if(!req.body.dial_code) {
+            req.flash('error', 'Please provide your country code.')
+            return res.redirect('/address/add')
+        }
+
         try {
             const [demographics, created] = await findOrCreateDemographic(req.user.id)
-            const options = {
+
+            let options = {
                 label: req.body.label || null,
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
@@ -44,15 +51,22 @@ router.post('/', cel.ensureLoggedIn('/login'), async function (req, res) {
                 street_address: req.body.street_address,
                 landmark: req.body.landmark,
                 city: req.body.city,
+                dial_code: req.body.dial_code || null,
                 stateId: req.body.stateId,
                 countryId: req.body.countryId,
-                dial_code: req.body.code,
                 demographicId: demographics.id,
                 whatsapp_number: req.body.whatsapp_number || null,
                 // if no addresses, then first one added is primary
                 primary: !demographics.get().addresses
             }
+            let number = req.body.dial_code + options.mobile_number
+            if (!validateNumber(parseNumberByCountry(number,req.body.countryId))) {
+                req.flash('error', 'This number does not exist in your country.')
+                return res.redirect('/address/add')
+            }
+
             const address = await createAddress(options)
+
             if (returnTo) {
                 res.redirect(returnTo)
             } else {
@@ -85,6 +99,13 @@ router.post('/:id', cel.ensureLoggedIn('/login'), async function (req, res) {
                 let demoId = demo.id
                 await updateAddressbyDemoId(demoId, {primary: false})
             }
+            let number = req.body.dial_code + options.mobile_number
+
+            if (!validateNumber(parseNumberByCountry(number,req.body.countryId))) {
+                req.flash('error', 'This number does not exist in your country.')
+                return res.redirect('/address/add')
+            }
+
 
             await updateAddressbyAddrId(addrId,{
                     label: req.body.label || null,
@@ -98,7 +119,7 @@ router.post('/:id', cel.ensureLoggedIn('/login'), async function (req, res) {
                     city: req.body.city,
                     stateId: req.body.stateId,
                     countryId: req.body.countryId,
-                    dial_code: req.body.code,
+                    dial_code: req.body.dial_code,
                     whatsapp_number: req.body.whatsapp_number || null,
                     primary: req.body.primary === 'on'
                 })

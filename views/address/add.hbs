@@ -64,7 +64,6 @@
           <div class="row justify-content-between">
             <div class="row no-gutters align-items-center justify-content-between detail-row">
               <div class="label-input col-md-4 col-sm-3">State</div>
-
               <select name="stateId" required class="input-text col-md-8 col-sm-8">
                 {{#each states}}
                   <option class="dropdown-li" value="{{id}}" {{#selected}}selected="selected"{{/selected}}>{{name}}</option>
@@ -85,9 +84,9 @@
           <div class="row justify-content-between">
             <div class="row no-gutters align-items-center justify-content-between detail-row">
               <div class="label-input col-md-4 col-sm-3">Code</div>
-              <select name="countryId" required class ="input-text col-md-8 col-sm-8">
+              <select name="dial_code" required class ="input-text col-md-8 col-sm-8">
                 {{#each countries}}
-                  <option class="dropdown-li" value="{{code}}" {{#selected}}selected="selected"{{/selected}}>{{dial_code}}</option>
+                  <option class="dropdown-li" value="{{dial_code}}" {{#selected}}selected="selected"{{/selected}}>{{dial_code}}</option>
                 {{/each}}
               </select>
             </div>

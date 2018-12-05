@@ -51,7 +51,7 @@ router.post('/', cel.ensureLoggedIn('/login'), async function (req, res) {
                 street_address: req.body.street_address,
                 landmark: req.body.landmark,
                 city: req.body.city,
-                dial_code: req.body.dial_code || null,
+                dial_code: req.body.dial_code,
                 stateId: req.body.stateId,
                 countryId: req.body.countryId,
                 demographicId: demographics.id,
@@ -59,14 +59,14 @@ router.post('/', cel.ensureLoggedIn('/login'), async function (req, res) {
                 // if no addresses, then first one added is primary
                 primary: !demographics.get().addresses
             }
-            let number = req.body.dial_code + options.mobile_number
+            let number = options.dial_code + options.mobile_number
+
             if (!validateNumber(parseNumberByCountry(number,req.body.countryId))) {
                 req.flash('error', 'This number does not exist in your country.')
                 return res.redirect('/address/add')
             }
 
             const address = await createAddress(options)
-
             if (returnTo) {
                 res.redirect(returnTo)
             } else {
@@ -105,7 +105,6 @@ router.post('/:id', cel.ensureLoggedIn('/login'), async function (req, res) {
                 req.flash('error', 'This number does not exist in your country.')
                 return res.redirect('/address/add')
             }
-
 
             await updateAddressbyAddrId(addrId,{
                     label: req.body.label || null,

@@ -1,5 +1,26 @@
 const { models } = require("../db/models");
 
+const Sequelize = require('sequelize')
+const config = require('../../config')
+const secrets = config.SECRETS
+
+const db_name = secrets.DB.NAME
+const db_user = secrets.DB.USER
+const db_pass = secrets.DB.PASSWORD
+const db_host = secrets.DB.HOST
+
+const DATABASE_URL = process.env.DATABASE_URL || ('postgres://' + db_user + ":" + db_pass + "@" + db_host + ":5432/" + db_name)
+
+const sequelize = new Sequelize(DATABASE_URL, {
+    dialect: 'postgres',
+    pool: {
+        max: 5,
+        min: 0,
+        idle: 10000
+    },
+    logging: config.DEBUG ? console.log : false
+})
+
 function findOrCreateDemographic(userId) {
   return models.Demographic.findCreateFind({
     where: { userId: userId },
@@ -57,12 +78,10 @@ function findAllCountries() {
 function findAllBranches() {
   return models.Branch.findAll({});
 }
+
 function findAllColleges() {
-  return models.College.findAll({
-      order:[
-          ['name','ASC']
-      ]
-  });
+  return sequelize.query('SELECT name FROM colleges ORDER BY convert_to(name, \'iso-8859-15\') ASC;')
+  .spread((results, metadata) => {return results})
 }
 
 function upsertDemographic(id, userId, collegeId, branchId) {
